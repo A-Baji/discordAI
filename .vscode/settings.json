@@ -1,0 +1,13 @@
+{
+    "python.formatting.provider": "autopep8",
+    "python.analysis.typeCheckingMode": "off",
+    "python.linting.enabled": true,
+    "python.formatting.autopep8Args": [
+        "--max-line-length",
+        "120",
+        "--experimental"
+    ],
+    "python.analysis.extraPaths": [
+        "./discordai"
+    ],
+}
