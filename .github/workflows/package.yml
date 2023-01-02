@@ -25,7 +25,7 @@ jobs:
       with:
         python-version: ${{matrix.py_ver}}
     - name: Install Package
-      run: pip install -r requirements.txt
+      run: pip install -e .
     - name: Test Package
       run: discordai -V
   release:
@@ -62,6 +62,8 @@ jobs:
           - ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: recursive
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
