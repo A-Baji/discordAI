@@ -24,13 +24,8 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: ${{matrix.py_ver}}
-    - name: Test
-      run: |
-        ls -la
-        cd discordAI-modelizer
-        ls -la
     - name: Install Package
-      run: pip install .
+      run: pip install -r requirements.txt
     - name: Test Package
       run: discordai -V
   release:
