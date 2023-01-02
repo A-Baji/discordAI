@@ -18,12 +18,14 @@ jobs:
           - '3.10'
           - '3.11'
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
       with:
-        submodules: 'true'
+        submodules: recursive
     - uses: actions/setup-python@v4
       with:
         python-version: ${{matrix.py_ver}}
+    # - name: Checkout submodules
+    #   run: git submodule update --init --recursive
     - name: Install Package
       run: pip install .
     - name: Test Package
@@ -62,8 +64,6 @@ jobs:
           - ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-      with:
-        submodules: 'true'
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
