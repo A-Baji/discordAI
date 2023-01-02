@@ -7,7 +7,27 @@ on:
   pull_request:
 
 jobs:
+  test-package:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        py_ver:
+          - '3.8'
+          - '3.9'
+          - '3.10'
+          - '3.11'
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: ${{matrix.py_ver}}
+    - name: Install Package
+      run: pip install .
+    - name: Test Package
+      run: discordai -V
   release:
+    needs: test-package
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -40,6 +60,8 @@ jobs:
           - ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: recursive
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
