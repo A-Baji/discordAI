@@ -14,6 +14,7 @@ here = pathlib.Path(__file__).parent.resolve()
 with open(pathlib.Path(here, "requirements.txt")) as f:
     requirements = [r for r in f.read().splitlines()].append(
         "git+https://github.com/A-Baji/discordAI-modelizer.git#egg=discord-modelizer")
+print(f"REQUIREMENTS = {requirements}")
 
 setuptools.setup(
     name=package.__name__,
