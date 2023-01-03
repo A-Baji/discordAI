@@ -25,7 +25,7 @@ jobs:
       with:
         python-version: ${{matrix.py_ver}}
     - name: Install Package
-      run: pip install -e .
+      run: pip install .
     - name: Test Package
       run: discordai -V
   release:
