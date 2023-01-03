@@ -26,8 +26,9 @@ jobs:
         python-version: ${{matrix.py_ver}}
     - name: Install Package
       run: pip install .
-      shell: bash
-      stdin: none
+      args:
+        - none
+        - none
     - name: Test Package
       run: discordai -V
   release:
