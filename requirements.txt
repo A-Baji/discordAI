@@ -1,3 +1,4 @@
 discord.py
 openai
 appdirs
+discordai_modelizer @ git+https://github.com/A-Baji/discordAI-modelizer.git#egg=discord-modelizer
