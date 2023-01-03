@@ -12,9 +12,8 @@ if sys.version_info < min_py_version:
 
 here = pathlib.Path(__file__).parent.resolve()
 with open(pathlib.Path(here, "requirements.txt")) as f:
-    requirements = [r for r in f.read().splitlines()].append(
-        "git+https://github.com/A-Baji/discordAI-modelizer.git#egg=discord-modelizer")
-print(f"REQUIREMENTS = {requirements}")
+    requirements = [r for r in f.read().splitlines()]
+requirements.append("git+https://github.com/A-Baji/discordAI-modelizer.git#egg=discord-modelizer")
 
 setuptools.setup(
     name=package.__name__,
