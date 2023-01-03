@@ -35,6 +35,6 @@ setuptools.setup(
         ],
     },
     include_package_data=True,
-    install_requires=requirements,
+    install_requires=requirements.append("git+https://github.com/A-Baji/discordAI-modelizer.git"),
     python_requires="~={}.{}".format(*min_py_version),
 )
