@@ -25,7 +25,9 @@ jobs:
       with:
         python-version: ${{matrix.py_ver}}
     - name: Install Package
-      run: pip install . --use-pep517
+      run: pip install .
+      shell: bash
+      stdin: none
     - name: Test Package
       run: discordai -V
   release:
