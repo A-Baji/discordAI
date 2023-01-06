@@ -1,6 +1,6 @@
 # DiscordAI
 
-DiscordAI is CLI package that you can use to run your discord bot. It comes with two slash commands that use openAI's API to create prompt completions. There are also two hidden commands that are used to synchronize your bot's commands with discord: `@bot_name sync|unsyc guild|global`.
+DiscordAI is CLI package that you can use to run your discord bot. It can also be used to create customized openAI models based on a discord channel and user. The bot comes with two slash commands that use openAI's API to create prompt completions. There are also two hidden commands that are used to synchronize your bot's commands with discord: `@bot_name sync|unsyc guild|global`.
 
 ## Installation
 ### Executable
