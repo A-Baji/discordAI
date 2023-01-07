@@ -74,7 +74,7 @@ jobs:
     - name: Mac CLI Package
       if: ${{matrix.os == 'macos-latest'}}
       run: |
-        pyinstaller discordai/command_line.py --console --onefile --name=discordai --add-data='discordai/bot/cogs:discordai/bot/cogs' --hidden-import=openai --hidden-import=configparser --collect-data=discordai_modelizer
+        pyinstaller discordai/command_line.py --console --onefile --name=discordai --add-data='discordai/bot/cogs:discordai/bot/cogs' --hidden-import=openai --hidden-import=configparser --collect-data=discordai_modelizer --collect-data=aiohttp
         zip -j discordai-macos.zip dist/*discordai*
         chmod +x dist/*discordai*
     - name: Linux CLI Package
