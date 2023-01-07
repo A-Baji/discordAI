@@ -79,6 +79,7 @@ def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_
                 freq_default=float(freq_default),
                 max_tokens_default=max_tokens_default, stop_default=stop_default, openai_key=openai_key,
                 error="f\"Failed to generate valid response for prompt: {prompt}\\nError: {error}\""))
+        print(cogs_path)
         print(f"Successfully created new slash command: /{command_name} using model {model_id}")
 
 
