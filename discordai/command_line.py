@@ -1,4 +1,5 @@
 import argparse
+import json
 from discordai import __version__ as version
 from discordai import config as configuration
 from discordai import bot
@@ -19,12 +20,14 @@ def discordai():
     bot_cmds = command.add_parser("bot", description="Commands related to your discord bot")
     jobs = command.add_parser("jobs", description="Commands related to your openAI jobs")
     models = command.add_parser("models", description="Commands related to your openAI models")
+    config_cmds = command.add_parser("config", description="View and modify your config values")
 
     bot_cmds_subcommand = bot_cmds.add_subparsers(dest="subcommand")
     jobs_subcommand = jobs.add_subparsers(dest="subcommand")
     models_subcommand = models.add_subparsers(dest="subcommand")
+    config_cmds_subcommand = config_cmds.add_subparsers(dest="subcommand")
 
-    bot_cmds_start = bot_cmds_subcommand.add_parser(
+    bot_cmds_subcommand.add_parser(
         "start", description="Start your discord bot"
     )
 
@@ -213,6 +216,26 @@ def discordai():
         help="Target job id",
     )
 
+    config_bot_token = config_cmds_subcommand.add_parser(
+        "bot-token", description="Get or set your discord bot token"
+    )
+    config_bot_token.add_argument(
+        "-t", "--set-token",
+        type=str,
+        dest='new_token',
+        help="Discord bot token",
+    )
+
+    config_openai_key = config_cmds_subcommand.add_parser(
+        "openai-key", description="Get or set your openaAI API key"
+    )
+    config_openai_key.add_argument(
+        "-k", "--set-key",
+        type=str,
+        dest='new_key',
+        help="OpenAI API key",
+    )
+
     args = parser.parse_args()
     if args.command == "bot":
         if args.subcommand == "start":
@@ -236,6 +259,17 @@ def discordai():
             openai_wrapper.get_status(args.openai_key, args.job_id)
         if args.subcommand == "cancel":
             openai_wrapper.cancel_job(args.openai_key, args.job_id)
+    elif args.command == "config":
+        if args.subcommand == "bot-token":
+            if args.new_token:
+                configuration.save(json.dumps(dict(token=args.token, openai_key=config["openai_key"])))
+                config = configuration.get()
+            print(f"Your discord bot token: {config['token']}")
+        if args.subcommand == "openai-key":
+            if args.new_key:
+                configuration.save(json.dumps(dict(token=config["token"], openai_key=args.key)))
+                config = configuration.get()
+            print(f"Your discord bot token: {config['token']}")
 
 
 if __name__ == "__main__":
