@@ -16,32 +16,22 @@ def discordai():
     )
     command = parser.add_subparsers(dest="command")
 
-    start = command.add_parser("start", description="Start your discord bot")
+    bot_cmds = command.add_parser("bot", description="Commands related to your discord bot")
+    jobs = command.add_parser("jobs", description="Commands related to your openAI jobs")
+    models = command.add_parser("models", description="Commands related to your openAI models")
 
-    openai = command.add_parser("openai", description="OpenAI model customizer and API wrapper")
-    openai_subcommand = openai.add_subparsers(dest="subcommand")
+    bot_cmds_subcommand = bot_cmds.add_subparsers(dest="subcommand")
+    jobs_subcommand = jobs.add_subparsers(dest="subcommand")
+    models_subcommand = models.add_subparsers(dest="subcommand")
 
-    openai_create = openai_subcommand.add_parser(
-        "create", description="Create a new custom openAI model"
-    )
-    openai_create_required_named = openai_create.add_argument_group(
-        "required named arguments"
-    )
-    openai_create_required_named.add_argument(
-        "-c", "--channel",
-        type=str,
-        dest='channel',
-        help="The ID of the discord channel you want to use",
-    )
-    openai_create_required_named.add_argument(
-        "-u", "--user",
-        type=str,
-        dest='user',
-        help="The name#ID of the discord user you want to use",
+    bot_cmds_start = bot_cmds_subcommand.add_parser(
+        "start", description="Start your discord bot"
     )
 
-    openai_create_optional_named = openai_create.add_argument_group("optional named arguments")
-    openai_create_optional_named.add_argument(
+    model_list = models_subcommand.add_parser(
+        "list", description="List your openAi customized models"
+    )
+    model_list.add_argument(
         "-o", "--openai_key",
         type=str,
         default=config["openai_key"],
@@ -49,7 +39,43 @@ def discordai():
         dest='openai_key',
         help="Your openAI API key: DEFAULT=config.openai_key",
     )
-    openai_create_optional_named.add_argument(
+    model_list.add_argument(
+        "--simple",
+        action='store_true',
+        required=False,
+        dest='simple',
+        help="Simplify the output to just the model name, job id, and status",
+    )
+
+    model_create = models_subcommand.add_parser(
+        "create", description="Create a new openAI customized model"
+    )
+    model_create_required_named = model_create.add_argument_group(
+        "required named arguments"
+    )
+    model_create_required_named.add_argument(
+        "-c", "--channel",
+        type=str,
+        dest='channel',
+        help="The ID of the discord channel you want to use",
+    )
+    model_create_required_named.add_argument(
+        "-u", "--user",
+        type=str,
+        dest='user',
+        help="The name#ID of the discord user you want to use",
+    )
+
+    model_create_optional_named = model_create.add_argument_group("optional named arguments")
+    model_create_optional_named.add_argument(
+        "-o", "--openai_key",
+        type=str,
+        default=config["openai_key"],
+        required=False,
+        dest='openai_key',
+        help="Your openAI API key: DEFAULT=config.openai_key",
+    )
+    model_create_optional_named.add_argument(
         "-b", "--base_model",
         choices=["davinci", "curie", "babbage", "ada", "none"],
         default="none",
@@ -57,7 +83,7 @@ def discordai():
         dest='base_model',
         help="The base model to use for customization. If none, then skips training step: DEFAULT=none",
     )
-    openai_create_optional_named.add_argument(
+    model_create_optional_named.add_argument(
         "-t", "--thought_time",
         type=int,
         default=10,
@@ -65,7 +91,7 @@ def discordai():
         dest='thought_time',
         help="The max amount of time in seconds to consider two individual messages to be part of the same \"thought\": DEFAULT=10",
     )
-    openai_create_optional_named.add_argument(
+    model_create_optional_named.add_argument(
         "-m", "--max_entries",
         type=int,
         default=1000,
@@ -73,7 +99,7 @@ def discordai():
         dest='max_entries',
         help="The max amount of entries that may exist in the dataset: DEFAULT=1000",
     )
-    openai_create_optional_named.add_argument(
+    model_create_optional_named.add_argument(
         "-r", "--reduce_mode",
         choices=["first", "last", "middle", "even"],
         default="even",
@@ -81,14 +107,14 @@ def discordai():
         dest='reduce_mode',
         help="The method to reduce the entry count of the dataset: DEFAULT=even",
     )
-    openai_create_optional_named.add_argument(
+    model_create_optional_named.add_argument(
         "--dirty",
         action='store_false',
         required=False,
         dest='dirty',
         help="A flag that can be set to skip the clean up step for outputted files: DEFAULT=False",
     )
-    openai_create_optional_named.add_argument(
+    model_create_optional_named.add_argument(
         "--redownload",
         action='store_true',
         required=False,
@@ -96,10 +122,10 @@ def discordai():
         help="A flag that can be set to redownload the discord chat logs: DEFAULT=False",
     )
 
-    openai_list_jobs = openai_subcommand.add_parser(
-        "list_jobs", description="Get a list of your openAI jobs"
+    model_delete = models_subcommand.add_parser(
+        "delete", description="Delete an openAI customized model"
     )
-    openai_list_jobs.add_argument(
+    model_delete.add_argument(
         "-o", "--openai_key",
         type=str,
         default=config["openai_key"],
@@ -107,130 +133,113 @@ def discordai():
         dest='openai_key',
         help="Your openAI API key: DEFAULT=config.openai_key",
     )
-    openai_list_jobs.add_argument(
-        "--simple",
-        action='store_true',
-        required=False,
-        dest='simple',
-        help="Simplify the output to just the model name, job id, and status",
-    )
-
-    openai_list_models = openai_subcommand.add_parser(
-        "list_models", description="Get a list of your openAI models"
-    )
-    openai_list_models.add_argument(
-        "-o", "--openai_key",
-        type=str,
-        default=config["openai_key"],
-        required=False,
-        dest='openai_key',
-        help="Your openAI API key: DEFAULT=config.openai_key",
-    )
-    openai_list_models.add_argument(
-        "--simple",
-        action='store_true',
-        required=False,
-        dest='simple',
-        help="Simplify the output to just the model name, job id, and status",
-    )
-
-    openai_follow = openai_subcommand.add_parser(
-        "follow", description="Follow a custom openAI model job"
-    )
-    openai_follow.add_argument(
-        "-o", "--openai_key",
-        type=str,
-        default=config["openai_key"],
-        required=False,
-        dest='openai_key',
-        help="Your openAI API key: DEFAULT=config.openai_key",
-    )
-    openai_follow.add_argument(
-        "-j", "--job_id",
-        type=str,
-        dest='job_id',
-        help="Target job id",
-    )
-
-    openai_status = openai_subcommand.add_parser(
-        "status", description="Get the status of a custom openAI model job"
-    )
-    openai_status.add_argument(
-        "-o", "--openai_key",
-        type=str,
-        default=config["openai_key"],
-        required=False,
-        dest='openai_key',
-        help="Your openAI API key: DEFAULT=config.openai_key",
-    )
-    openai_status.add_argument(
-        "-j", "--job_id",
-        type=str,
-        dest='job_id',
-        help="Target job id",
-    )
-
-    openai_cancel = openai_subcommand.add_parser(
-        "cancel", description="Cancel a custom openAI model job"
-    )
-    openai_cancel.add_argument(
-        "-o", "--openai_key",
-        type=str,
-        default=config["openai_key"],
-        required=False,
-        dest='openai_key',
-        help="Your openAI API key: DEFAULT=config.openai_key",
-    )
-    openai_cancel.add_argument(
-        "-j", "--job_id",
-        type=str,
-        dest='job_id',
-        help="Target job id",
-    )
-
-    openai_delete = openai_subcommand.add_parser(
-        "delete", description="Delete a custom openAI model"
-    )
-    openai_delete.add_argument(
-        "-o", "--openai_key",
-        type=str,
-        default=config["openai_key"],
-        required=False,
-        dest='openai_key',
-        help="Your openAI API key: DEFAULT=config.openai_key",
-    )
-    openai_delete.add_argument(
+    model_delete.add_argument(
         "-m", "--model_id",
         type=str,
         dest='model_id',
         help="Target model id",
     )
 
-    try:
-        args = parser.parse_args()
-        if args.command == "start":
+    jobs_list = jobs_subcommand.add_parser(
+        "list", description="List your openAI customization jobs"
+    )
+    jobs_list.add_argument(
+        "-o", "--openai_key",
+        type=str,
+        default=config["openai_key"],
+        required=False,
+        dest='openai_key',
+        help="Your openAI API key: DEFAULT=config.openai_key",
+    )
+    jobs_list.add_argument(
+        "--simple",
+        action='store_true',
+        required=False,
+        dest='simple',
+        help="Simplify the output to just the model name, job id, and status",
+    )
+
+    jobs_follow = jobs_subcommand.add_parser(
+        "follow", description="Follow an openAI customization job"
+    )
+    jobs_follow.add_argument(
+        "-o", "--openai_key",
+        type=str,
+        default=config["openai_key"],
+        required=False,
+        dest='openai_key',
+        help="Your openAI API key: DEFAULT=config.openai_key",
+    )
+    jobs_follow.add_argument(
+        "-j", "--job_id",
+        type=str,
+        dest='job_id',
+        help="Target job id",
+    )
+
+    jobs_status = jobs_subcommand.add_parser(
+        "status", description="Get an openAI customization job's status"
+    )
+    jobs_status.add_argument(
+        "-o", "--openai_key",
+        type=str,
+        default=config["openai_key"],
+        required=False,
+        dest='openai_key',
+        help="Your openAI API key: DEFAULT=config.openai_key",
+    )
+    jobs_status.add_argument(
+        "-j", "--job_id",
+        type=str,
+        dest='job_id',
+        help="Target job id",
+    )
+
+    jobs_cancel = jobs_subcommand.add_parser(
+        "cancel", description="Cancel an openAI customization job"
+    )
+    jobs_cancel.add_argument(
+        "-o", "--openai_key",
+        type=str,
+        default=config["openai_key"],
+        required=False,
+        dest='openai_key',
+        help="Your openAI API key: DEFAULT=config.openai_key",
+    )
+    jobs_cancel.add_argument(
+        "-j", "--job_id",
+        type=str,
+        dest='job_id',
+        help="Target job id",
+    )
+
+    args = parser.parse_args()
+    if args.command == "bot":
+        if args.subcommand == "start":
             bot.start_bot(config)
-        elif args.command == "openai":
-            if args.subcommand == "create":
-                customize.create_model(config["token"], args.openai_key, args.channel, args.user,
-                                       thought_time=args.thought_time, max_entry_count=args.max_entries,
-                                       reduce_mode=args.reduce_mode, base_model=args.base_model, clean=args.dirty,
-                                       redownload=args.redownload)
-            if args.subcommand == "list_jobs":
-                openai_wrapper.list_jobs(args.openai_key, args.simple)
-            if args.subcommand == "list_models":
-                openai_wrapper.list_models(args.openai_key, args.simple)
-            if args.subcommand == "follow":
-                openai_wrapper.follow_job(args.openai_key, args.job_id)
-            if args.subcommand == "status":
-                openai_wrapper.get_status(args.openai_key, args.job_id)
-            if args.subcommand == "cancel":
-                openai_wrapper.cancel_job(args.openai_key, args.job_id)
-            if args.subcommand == "delete":
-                openai_wrapper.delete_model(args.openai_key, args.model_id)
-    except KeyboardInterrupt:
-        print("Program interrupted by user. Exiting...")
+    elif args.command == "models":
+        if args.subcommand == "list":
+            openai_wrapper.list_models(args.openai_key, args.simple)
+        if args.subcommand == "create":
+            customize.create_model(config["token"], args.openai_key, args.channel, args.user,
+                                   thought_time=args.thought_time, max_entry_count=args.max_entries,
+                                   reduce_mode=args.reduce_mode, base_model=args.base_model, clean=args.dirty,
+                                   redownload=args.redownload)
+        if args.subcommand == "delete":
+            openai_wrapper.delete_model(args.openai_key, args.model_id)
+    elif args.command == "jobs":
+        if args.subcommand == "list":
+            openai_wrapper.list_jobs(args.openai_key, args.simple)
+        if args.subcommand == "follow":
+            openai_wrapper.follow_job(args.openai_key, args.job_id)
+        if args.subcommand == "status":
+            openai_wrapper.get_status(args.openai_key, args.job_id)
+        if args.subcommand == "cancel":
+            openai_wrapper.cancel_job(args.openai_key, args.job_id)
 
 
 if __name__ == "__main__":
-    discordai()
+    try:
+        discordai()
+    except KeyboardInterrupt:
+        print("Program interrupted by user. Exiting...")
