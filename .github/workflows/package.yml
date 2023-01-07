@@ -56,7 +56,7 @@ jobs:
       matrix:
         os:
           - windows-latest
-          - macos-latest
+          # - macos-latest
           - ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -74,7 +74,7 @@ jobs:
     - name: Mac CLI Package
       if: ${{matrix.os == 'macos-latest'}}
       run: |
-        pyinstaller discordai/command_line.py --console --onefile --name=discordai --add-data='discordai/bot/cogs:discordai/bot/cogs' --hidden-import=openai --hidden-import=configparser --collect-data=discordai_modelizer --collect-data=aiohttp
+        pyinstaller discordai/command_line.py --console --onefile --name=discordai --add-data='discordai/bot/cogs:discordai/bot/cogs' --hidden-import=openai --hidden-import=configparser --collect-data=discordai_modelizer --collect-data=aiohttp --collect-data=certifi
         zip -j discordai-macos.zip dist/*discordai*
         chmod +x dist/*discordai*
     - name: Linux CLI Package
