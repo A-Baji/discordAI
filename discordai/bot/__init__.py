@@ -117,7 +117,7 @@ def start_bot(config):
             # The code is being run normally
             bot_dir = os.path.dirname(__file__)
             cogs_path = os.path.join(bot_dir, "cogs")
-
+        print(cogs_path)
         for file in os.listdir(cogs_path):
             if file.endswith(".py"):
                 extension = file[:-3]
