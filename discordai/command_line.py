@@ -206,27 +206,30 @@ def discordai():
         help="Target model id",
     )
 
-    args = parser.parse_args()
-    if args.command == "start":
-        bot.start_bot(config)
-    elif args.command == "openai":
-        if args.subcommand == "create":
-            customize.create_model(config["token"], args.openai_key, args.channel, args.user,
-                                   thought_time=args.thought_time, max_entry_count=args.max_entries,
-                                   reduce_mode=args.reduce_mode, base_model=args.base_model, clean=args.dirty,
-                                   redownload=args.redownload)
-        if args.subcommand == "list_jobs":
-            openai_wrapper.list_jobs(args.openai_key, args.simple)
-        if args.subcommand == "list_models":
-            openai_wrapper.list_models(args.openai_key, args.simple)
-        if args.subcommand == "follow":
-            openai_wrapper.follow_job(args.openai_key, args.job_id)
-        if args.subcommand == "status":
-            openai_wrapper.get_status(args.openai_key, args.job_id)
-        if args.subcommand == "cancel":
-            openai_wrapper.cancel_job(args.openai_key, args.job_id)
-        if args.subcommand == "delete":
-            openai_wrapper.delete_model(args.openai_key, args.model_id)
+    try:
+        args = parser.parse_args()
+        if args.command == "start":
+            bot.start_bot(config)
+        elif args.command == "openai":
+            if args.subcommand == "create":
+                customize.create_model(config["token"], args.openai_key, args.channel, args.user,
+                                       thought_time=args.thought_time, max_entry_count=args.max_entries,
+                                       reduce_mode=args.reduce_mode, base_model=args.base_model, clean=args.dirty,
+                                       redownload=args.redownload)
+            if args.subcommand == "list_jobs":
+                openai_wrapper.list_jobs(args.openai_key, args.simple)
+            if args.subcommand == "list_models":
+                openai_wrapper.list_models(args.openai_key, args.simple)
+            if args.subcommand == "follow":
+                openai_wrapper.follow_job(args.openai_key, args.job_id)
+            if args.subcommand == "status":
+                openai_wrapper.get_status(args.openai_key, args.job_id)
+            if args.subcommand == "cancel":
+                openai_wrapper.cancel_job(args.openai_key, args.job_id)
+            if args.subcommand == "delete":
+                openai_wrapper.delete_model(args.openai_key, args.model_id)
+    except KeyboardInterrupt:
+        print("Program interrupted by user. Exiting...")
 
 
 if __name__ == "__main__":
