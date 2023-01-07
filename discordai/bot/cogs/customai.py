@@ -24,7 +24,7 @@ class CustomAI(commands.Cog, name="customai"):
     @app_commands.describe(
         model="The id of your custom model",
         prompt="The prompt to pass to your model: Default=\"\"",
-        temp="What sampling temperature to use. Higher values means more risks: Min=0 Max=1 Default=0.5",
+        temp="What sampling temperature to use. Higher values means more risks: Min=0 Max=1 Default=1",
         presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2 Max=2 Default=0",
         frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2 Max=2 Default=0",
         max_tokens="The max number of tokens to generate. Each token costs credits: Default=125",
