@@ -9,7 +9,9 @@ Version: 5.4.1
 import asyncio
 import os
 import platform
+import shutil
 import sys
+import appdirs
 
 import discord
 from discord.ext import commands
@@ -111,13 +113,16 @@ def start_bot(config):
         """
         if getattr(sys, 'frozen', False):
             # The code is being run as a frozen executable
-            data_dir = sys._MEIPASS
-            cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+            config_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
+            cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
+            if not os.path.exists(cogs_path):
+                data_dir = sys._MEIPASS
+                og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+                shutil.copytree(og_cogs_path, os.path.join(config_dir, cogs_path))
         else:
             # The code is being run normally
             bot_dir = os.path.dirname(__file__)
             cogs_path = os.path.join(bot_dir, "cogs")
-        print(cogs_path)
         for file in os.listdir(cogs_path):
             if file.endswith(".py"):
                 extension = file[:-3]

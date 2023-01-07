@@ -1,6 +1,8 @@
 import os
 import pathlib
+import shutil
 import sys
+import appdirs
 
 
 template = """from discord import app_commands
@@ -57,18 +59,23 @@ async def setup(bot):
     await bot.add_cog({class_name}(bot))
 """
 
+config_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
+
 
 def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_default: float, freq_default: float,
                     max_tokens_default: int, stop_default: bool, openai_key: str):
     if getattr(sys, 'frozen', False):
         # The code is being run as a frozen executable
-        data_dir = sys._MEIPASS
-        cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+        if not os.path.exists(os.path.join(config_dir, "discordai/bot/cogs")):
+            data_dir = sys._MEIPASS
+            og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+            src_dir = og_cogs_path.split('/')[-2]
+            shutil.copytree(og_cogs_path, os.path.join(config_dir, src_dir))
+        cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
     else:
         # The code is being run normally
         template_dir = os.path.dirname(__file__)
-        bot_dir = os.path.join(template_dir, "bot")
-        cogs_path = os.path.join(bot_dir, "cogs")
+        cogs_path = os.path.join(os.path.join(template_dir, "bot"), "cogs")
     with open(pathlib.Path(cogs_path, f"{command_name}.py"), "w") as f:
         os.makedirs(cogs_path, exist_ok=True)
         f.write(
@@ -79,7 +86,6 @@ def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_
                 freq_default=float(freq_default),
                 max_tokens_default=max_tokens_default, stop_default=stop_default, openai_key=openai_key,
                 error="f\"Failed to generate valid response for prompt: {prompt}\\nError: {error}\""))
-        print(cogs_path)
         print(f"Successfully created new slash command: /{command_name} using model {model_id}")
 
 
@@ -90,13 +96,16 @@ def delete_command(command_name: str):
         return
     if getattr(sys, 'frozen', False):
         # The code is being run as a frozen executable
-        data_dir = sys._MEIPASS
-        cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+        if not os.path.exists(os.path.join(config_dir, "discordai/bot/cogs")):
+            data_dir = sys._MEIPASS
+            og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+            src_dir = og_cogs_path.split('/')[-2]
+            shutil.copytree(og_cogs_path, os.path.join(config_dir, src_dir))
+        cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
     else:
         # The code is being run normally
         template_dir = os.path.dirname(__file__)
-        bot_dir = os.path.join(template_dir, "bot")
-        cogs_path = os.path.join(bot_dir, "cogs")
+        cogs_path = os.path.join(os.path.join(template_dir, "bot"), "cogs")
     try:
         os.remove(pathlib.Path(cogs_path, f"{command_name}.py"))
         print(f"Successfully deleted command: /{command_name}")
