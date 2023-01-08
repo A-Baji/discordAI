@@ -121,18 +121,22 @@ def start_bot(config):
             #     data_dir = sys._MEIPASS
             #     og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
             #     shutil.copytree(og_cogs_path, os.path.join(data_dir, cogs_path))
-            data = pkgutil.get_data("discordai.bot", "cogs")
 
-            # Write the data to a temporary directory
-            temp_dir = tempfile.TemporaryDirectory()
-            cogs_path = os.path.join(temp_dir, "cogs")
-            with open(cogs_path, "wb") as f:
-                f.write(data)
+            # Get the user's data directory
+            data_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
+
+            # Create a subdirectory to store the cogs
+            cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+            if not os.path.exists(cogs_path):
+                os.makedirs(cogs_path)
 
             # Copy the cogs to the user's system
-            data_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
-            cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
-            shutil.copytree(temp_dir, cogs_path)
+            data = pkgutil.get_data("discordai.bot", "cogs")
+            temp_dir = tempfile.TemporaryDirectory()
+            temp_cogs_path = os.path.join(temp_dir, "cogs")
+            with open(temp_cogs_path, "wb") as f:
+                f.write(data)
+            shutil.copytree(temp_cogs_path, cogs_path)
         else:
             # The code is being run normally
             bot_dir = os.path.dirname(__file__)
