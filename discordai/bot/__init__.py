@@ -117,8 +117,9 @@ def start_bot(config):
             cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
             if not os.path.exists(cogs_path):
                 data_dir = sys._MEIPASS
-                og_cogs_path = os.path.join(data_dir, "discordai")
-                shutil.copytree(og_cogs_path, config_dir)
+                og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+                shutil.copytree(og_cogs_path, os.path.join(config_dir, cogs_path))
+                bot.add_cog(Muhammad(bot=bot))
         else:
             # The code is being run normally
             bot_dir = os.path.dirname(__file__)

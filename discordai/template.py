@@ -69,8 +69,8 @@ def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_
         cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
         if not os.path.exists(cogs_path):
             data_dir = sys._MEIPASS
-            og_cogs_path = os.path.join(data_dir, "discordai")
-            shutil.copytree(data_dir, config_dir)
+            og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+            shutil.copytree(og_cogs_path, os.path.join(config_dir, cogs_path))
     else:
         # The code is being run normally
         template_dir = os.path.dirname(__file__)
@@ -98,8 +98,8 @@ def delete_command(command_name: str):
         cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
         if not os.path.exists(cogs_path):
             data_dir = sys._MEIPASS
-            og_cogs_path = os.path.join(data_dir, "discordai")
-            shutil.copytree(og_cogs_path, config_dir)
+            og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+            shutil.copytree(og_cogs_path, os.path.join(config_dir, cogs_path))
     else:
         # The code is being run normally
         template_dir = os.path.dirname(__file__)
