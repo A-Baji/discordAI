@@ -125,7 +125,7 @@ def start_bot(config):
                     extension = file[:-3]
                     if extension != "__init__":
                         try:
-                            module_path = os.path.join(data_dir, f'{extension}.py')
+                            module_path = os.path.join(cogs_path, f'{extension}.py')
                             spec = importlib.util.spec_from_file_location(extension, module_path)
                             module = importlib.util.module_from_spec(spec)
                             spec.loader.exec_module(module)
