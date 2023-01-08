@@ -21,7 +21,7 @@ def discordai():
     bot_cmds = command.add_parser("bot", description="Commands related to your discord bot")
     model = command.add_parser("model", description="Commands related to your openAI models")
     job = command.add_parser("job", description="Commands related to your openAI jobs")
-    config_cmds = command.add_parser("config", description="View and modify your config values")
+    config_cmds = command.add_parser("config", description="View and modify your config")
 
     bot_cmds_subcommand = bot_cmds.add_subparsers(dest="subcommand")
     model_subcommand = model.add_subparsers(dest="subcommand")
@@ -144,8 +144,8 @@ def discordai():
     )
 
     model_create = model_subcommand.add_parser(
-        "create", description="Create a new openAI customized model"
-    )
+        "create",
+        description="Create a new openAI customized model by downloading the specified chat logs, parsing them into a usable dataset, and then training a customized model using openai")
     model_create_required_named = model_create.add_argument_group(
         "required named arguments"
     )

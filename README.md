@@ -13,22 +13,40 @@ Download the CLI executable for your OS from the [latest release](https://github
 3. The source may now be deleted
 
 ## Commands
-### `discordai start`
+### Bot
+Commands related to your discord bot
+#### `discordai bot start`
 Start your bot
-### `discordai openai create`
-Download the specified chat logs, parse them into a usable dataset, then create a customized model using openai.
-### `discordai openai list_jobs`
-List all of your openai customization jobs.
-### `discordai openai list_models`
-List all of your openai customized models.
-### `discordai openai follow`
-Output the event stream of a specified customization job process.
-### `discordai openai status`
-Get the status of a specified customization job.
-### `discordai openai cancel`
-Cancel a specified customization job.
-### `discordai openai delete`
-Delete a specified customized model.
+#### `discordai bot commands`
+Manage slash commands
+* `discordai bot commands new`
+  * Create a new slash command by filling out a template
+* `discordai bot commands delete`
+  * Delete a slash command
+### Model
+Commands related to your openAI models
+#### `discordai model list`
+List your openAi customized models
+#### `discordai model create`
+Create a new openAI customized model by downloading the specified chat logs, parsing them into a usable dataset, and then training a customized model using openai
+#### `discordai model delete`
+Delete an openAI customized model
+### Job
+Commands related to your openAI jobs
+#### `discordai job list`
+List your openAI customization jobs
+#### `discordai job follow`
+Follow an openAI customization job
+#### `discordai job status`
+Get an openAI customization job's status
+#### `discordai job cancel`
+Cancel an openAI customization job
+### Config
+View and modify your config
+#### `discordai config bot-token`
+Get or set your discord bot token
+#### `discordai job openai-key`
+Get or set your openaAI API key
 
 ## Disclaimer
 This application allows users to download the chat history of any channel for which they have permission to invite a bot, and then use those logs to create an openai model based on a user's chat messages. It is important to note that this application should only be used with the consent of all members of the channel. Using this application for malicious purposes, such as impersonation, or without the consent of all members is strictly prohibited.
