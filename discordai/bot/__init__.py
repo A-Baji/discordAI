@@ -126,7 +126,7 @@ def start_bot(config):
                     extension = file[:-3]
                     if extension != "__init__":
                         try:
-                            await bot.load_extension(f".{extension}", package=cogs_path)
+                            await bot.load_extension(extension, package=cogs_path)
                             print(f"Loaded extension '{extension}'")
                         except Exception as e:
                             exception = f"{type(e).__name__}: {e}"
