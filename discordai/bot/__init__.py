@@ -24,7 +24,7 @@ bot = Bot(command_prefix=commands.when_mentioned_or(
     '/'), intents=intents, help_command=None)
 
 
-def start_bot(config):
+def start_bot(config, sync=False):
     bot.config = config
 
     @bot.event
@@ -36,6 +36,9 @@ def start_bot(config):
         print(f"discord.py API version: {discord.__version__}")
         print(f"Python version: {platform.python_version()}")
         print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
+        if sync:
+            print("Syncing commands globally...")
+            await bot.tree.sync()
         print("-------------------")
 
     @bot.event

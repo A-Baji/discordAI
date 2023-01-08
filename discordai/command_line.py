@@ -28,9 +28,17 @@ def discordai():
     job_subcommand = job.add_subparsers(dest="subcommand")
     config_cmds_subcommand = config_cmds.add_subparsers(dest="subcommand")
 
-    bot_cmds_subcommand.add_parser(
+    bot_cmds_start = bot_cmds_subcommand.add_parser(
         "start", description="Start your discord bot"
     )
+    bot_cmds_start.add_argument(
+        "--sync",
+        action='store_true',
+        required=False,
+        dest='sync',
+        help="Sync discord commands gloablly on start up",
+    )
+
     bot_cmds_commands = bot_cmds_subcommand.add_parser(
         "commands", description="Manage your discord bot's slash commands"
     )
@@ -100,7 +108,7 @@ def discordai():
         action='store_true',
         required=False,
         dest='stop_default',
-        help="A flag that sets the stop option to use for completions to True",
+        help="Set the stop option to use for completions to True",
     )
 
     delete_cmd = bot_cmds_commands_subcommand.add_parser(
@@ -199,14 +207,14 @@ def discordai():
         action='store_false',
         required=False,
         dest='dirty',
-        help="A flag that can be set to skip the clean up step for outputted files",
+        help="Skip the clean up step for outputted files",
     )
     model_create_optional_named.add_argument(
         "--redownload",
         action='store_true',
         required=False,
         dest='redownload',
-        help="A flag that can be set to redownload the discord chat logs",
+        help="Redownload the discord chat logs",
     )
 
     model_delete = model_subcommand.add_parser(
@@ -339,7 +347,7 @@ def discordai():
     args = parser.parse_args()
     if args.command == "bot":
         if args.subcommand == "start":
-            bot.start_bot(config)
+            bot.start_bot(config, args.sync)
         if args.subcommand == "commands":
             if args.subsubcommand == "new":
                 template.gen_new_command(args.model_id, args.command_name, args.temp_default, args.pres_default,
