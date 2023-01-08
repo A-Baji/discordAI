@@ -8,12 +8,11 @@ Version: 5.4.1
 
 import asyncio
 import os
-import pkgutil
 import platform
 import shutil
 import sys
-import tempfile
 import appdirs
+import importlib.util
 
 import discord
 from discord.ext import commands
@@ -126,6 +125,11 @@ def start_bot(config):
                     extension = file[:-3]
                     if extension != "__init__":
                         try:
+                            module_path = os.path.join(data_dir, f'{extension}.py')
+                            spec = importlib.util.spec_from_file_location(extension, module_path)
+                            module = importlib.util.module_from_spec(spec)
+                            spec.loader.exec_module(module)
+                            module.setup(bot=bot)
                             await bot.load_extension(extension, package=cogs_path)
                             print(f"Loaded extension '{extension}'")
                         except Exception as e:
