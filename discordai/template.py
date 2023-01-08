@@ -66,12 +66,11 @@ def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_
                     max_tokens_default: int, stop_default: bool, openai_key: str):
     if getattr(sys, 'frozen', False):
         # The code is being run as a frozen executable
-        if not os.path.exists(os.path.join(config_dir, "discordai/bot/cogs")):
+        cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
+        if not os.path.exists(cogs_path):
             data_dir = sys._MEIPASS
             og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
-            src_dir = og_cogs_path.split('/')[-2]
-            shutil.copytree(og_cogs_path, os.path.join(config_dir, src_dir))
-        cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
+            shutil.copytree(og_cogs_path, os.path.join(config_dir, cogs_path))
     else:
         # The code is being run normally
         template_dir = os.path.dirname(__file__)
@@ -96,12 +95,11 @@ def delete_command(command_name: str):
         return
     if getattr(sys, 'frozen', False):
         # The code is being run as a frozen executable
-        if not os.path.exists(os.path.join(config_dir, "discordai/bot/cogs")):
+        cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
+        if not os.path.exists(cogs_path):
             data_dir = sys._MEIPASS
             og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
-            src_dir = og_cogs_path.split('/')[-2]
-            shutil.copytree(og_cogs_path, os.path.join(config_dir, src_dir))
-        cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
+            shutil.copytree(og_cogs_path, os.path.join(config_dir, cogs_path))
     else:
         # The code is being run normally
         template_dir = os.path.dirname(__file__)
