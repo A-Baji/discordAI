@@ -16,13 +16,13 @@ Download the CLI executable for your OS from the [latest release](https://github
 ### Bot
 Commands related to your discord bot
 #### `discordai bot start`
-Start your bot
+Start your discord bot
 #### `discordai bot commands`
-Manage slash commands
+Manage your discord bot's slash commands
 * `discordai bot commands new`
-  * Create a new slash command by filling out a template
+  * Create a new slash command for your bot that will use a customized model for completions
 * `discordai bot commands delete`
-  * Delete a slash command
+  * Delete a slash command from your bot
 ### Model
 Commands related to your openAI models
 #### `discordai model list`
