@@ -70,7 +70,7 @@ def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_
         if not os.path.exists(cogs_path):
             data_dir = sys._MEIPASS
             og_cogs_path = os.path.join(data_dir, "discordai")
-            shutil.copytree(og_cogs_path, config_dir)
+            shutil.copytree(data_dir, config_dir)
     else:
         # The code is being run normally
         template_dir = os.path.dirname(__file__)
