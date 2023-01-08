@@ -129,8 +129,8 @@ def start_bot(config):
                             spec = importlib.util.spec_from_file_location(extension, module_path)
                             module = importlib.util.module_from_spec(spec)
                             spec.loader.exec_module(module)
-                            module.setup(bot=bot)
-                            await bot.load_extension(extension, package=cogs_path)
+                            await module.setup(bot=bot)
+                            # await bot.load_extension(extension, package=cogs_path)
                             print(f"Loaded extension '{extension}'")
                         except Exception as e:
                             exception = f"{type(e).__name__}: {e}"
