@@ -8,9 +8,11 @@ Version: 5.4.1
 
 import asyncio
 import os
+import pkgutil
 import platform
 import shutil
 import sys
+import tempfile
 import appdirs
 
 import discord
@@ -113,13 +115,24 @@ def start_bot(config):
         """
         if getattr(sys, 'frozen', False):
             # The code is being run as a frozen executable
-            config_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
-            cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
-            if not os.path.exists(cogs_path):
-                data_dir = sys._MEIPASS
-                og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
-                shutil.copytree(og_cogs_path, os.path.join(config_dir, cogs_path))
-                bot.add_cog(Muhammad(bot=bot))
+            # data_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
+            # cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+            # if not os.path.exists(cogs_path):
+            #     data_dir = sys._MEIPASS
+            #     og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+            #     shutil.copytree(og_cogs_path, os.path.join(data_dir, cogs_path))
+            data = pkgutil.get_data("discordai.bot", "cogs")
+
+            # Write the data to a temporary directory
+            temp_dir = tempfile.TemporaryDirectory()
+            cogs_path = os.path.join(temp_dir, "cogs")
+            with open(cogs_path, "wb") as f:
+                f.write(data)
+
+            # Copy the cogs to the user's system
+            data_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
+            cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+            shutil.copytree(temp_dir, cogs_path)
         else:
             # The code is being run normally
             bot_dir = os.path.dirname(__file__)
@@ -134,6 +147,9 @@ def start_bot(config):
                     except Exception as e:
                         exception = f"{type(e).__name__}: {e}"
                         print(f"Failed to load extension {extension}\n{exception}")
+        # Clean up the temporary directory
+        if temp_dir:
+            temp_dir.cleanup()
 
     asyncio.run(load_cogs())
     bot.run(config["token"])

@@ -1,7 +1,9 @@
 import os
 import pathlib
+import pkgutil
 import shutil
 import sys
+import tempfile
 import appdirs
 
 
@@ -66,11 +68,24 @@ def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_
                     max_tokens_default: int, stop_default: bool, openai_key: str):
     if getattr(sys, 'frozen', False):
         # The code is being run as a frozen executable
-        cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
-        if not os.path.exists(cogs_path):
-            data_dir = sys._MEIPASS
-            og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
-            shutil.copytree(og_cogs_path, os.path.join(config_dir, cogs_path))
+        # data_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
+        # cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+        # if not os.path.exists(cogs_path):
+        #     data_dir = sys._MEIPASS
+        #     og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+        #     shutil.copytree(og_cogs_path, os.path.join(data_dir, cogs_path))
+        data = pkgutil.get_data("discordai.bot", "cogs")
+
+        # Write the data to a temporary directory
+        temp_dir = tempfile.TemporaryDirectory()
+        cogs_path = os.path.join(temp_dir, "cogs")
+        with open(cogs_path, "wb") as f:
+            f.write(data)
+
+        # Copy the cogs to the user's system
+        data_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
+        cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+        shutil.copytree(temp_dir, cogs_path)
     else:
         # The code is being run normally
         template_dir = os.path.dirname(__file__)
@@ -86,6 +101,9 @@ def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_
                 max_tokens_default=max_tokens_default, stop_default=stop_default, openai_key=openai_key,
                 error="f\"Failed to generate valid response for prompt: {prompt}\\nError: {error}\""))
         print(f"Successfully created new slash command: /{command_name} using model {model_id}")
+    # Clean up the temporary directory
+    if temp_dir:
+        temp_dir.cleanup()
 
 
 def delete_command(command_name: str):
@@ -95,11 +113,24 @@ def delete_command(command_name: str):
         return
     if getattr(sys, 'frozen', False):
         # The code is being run as a frozen executable
-        cogs_path = os.path.join(config_dir, "discordai/bot/cogs")
-        if not os.path.exists(cogs_path):
-            data_dir = sys._MEIPASS
-            og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
-            shutil.copytree(og_cogs_path, os.path.join(config_dir, cogs_path))
+        # data_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
+        # cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+        # if not os.path.exists(cogs_path):
+        #     data_dir = sys._MEIPASS
+        #     og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+        #     shutil.copytree(og_cogs_path, os.path.join(data_dir, cogs_path))
+        data = pkgutil.get_data("discordai.bot", "cogs")
+
+        # Write the data to a temporary directory
+        temp_dir = tempfile.TemporaryDirectory()
+        cogs_path = os.path.join(temp_dir, "cogs")
+        with open(cogs_path, "wb") as f:
+            f.write(data)
+
+        # Copy the cogs to the user's system
+        data_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
+        cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+        shutil.copytree(temp_dir, cogs_path)
     else:
         # The code is being run normally
         template_dir = os.path.dirname(__file__)
@@ -109,3 +140,6 @@ def delete_command(command_name: str):
         print(f"Successfully deleted command: /{command_name}")
     except FileNotFoundError:
         print("Failed to delete command: No command with that name was found.")
+        # Clean up the temporary directory
+    if temp_dir:
+        temp_dir.cleanup()
