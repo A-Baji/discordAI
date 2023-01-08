@@ -83,12 +83,16 @@ def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_
         if not os.path.exists(cogs_path):
             os.makedirs(cogs_path)
 
-        # Copy the cogs to the user's system
+        # Access the cogs as data files within your package
         data = pkgutil.get_data("discordai.bot", "cogs")
+
+        # Write the cogs to a temporary directory
         temp_dir = tempfile.TemporaryDirectory()
         temp_cogs_path = os.path.join(temp_dir, "cogs")
         with open(temp_cogs_path, "wb") as f:
             f.write(data)
+
+        # Copy the cogs to the user's system
         shutil.copytree(temp_cogs_path, cogs_path)
     else:
         # The code is being run normally
@@ -132,12 +136,16 @@ def delete_command(command_name: str):
         if not os.path.exists(cogs_path):
             os.makedirs(cogs_path)
 
-        # Copy the cogs to the user's system
+        # Access the cogs as data files within your package
         data = pkgutil.get_data("discordai.bot", "cogs")
+
+        # Write the cogs to a temporary directory
         temp_dir = tempfile.TemporaryDirectory()
         temp_cogs_path = os.path.join(temp_dir, "cogs")
         with open(temp_cogs_path, "wb") as f:
             f.write(data)
+
+        # Copy the cogs to the user's system
         shutil.copytree(temp_cogs_path, cogs_path)
     else:
         # The code is being run normally
