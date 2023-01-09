@@ -9,7 +9,10 @@ Version: 5.4.1
 import asyncio
 import os
 import platform
+import shutil
 import sys
+import appdirs
+import importlib.util
 
 import discord
 from discord.ext import commands
@@ -21,7 +24,7 @@ bot = Bot(command_prefix=commands.when_mentioned_or(
     '/'), intents=intents, help_command=None)
 
 
-def start_bot(config):
+def start_bot(config, sync=False):
     bot.config = config
 
     @bot.event
@@ -33,6 +36,9 @@ def start_bot(config):
         print(f"discord.py API version: {discord.__version__}")
         print(f"Python version: {platform.python_version()}")
         print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
+        if sync:
+            print("Syncing commands globally...")
+            await bot.tree.sync()
         print("-------------------")
 
     @bot.event
@@ -111,23 +117,41 @@ def start_bot(config):
         """
         if getattr(sys, 'frozen', False):
             # The code is being run as a frozen executable
-            data_dir = sys._MEIPASS
+            data_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
             cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+            if not os.path.exists(cogs_path):
+                data_dir = sys._MEIPASS
+                og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+                shutil.copytree(og_cogs_path, os.path.join(data_dir, cogs_path))
+            for file in os.listdir(cogs_path):
+                if file.endswith(".py"):
+                    extension = file[:-3]
+                    if extension != "__init__":
+                        try:
+                            module_path = os.path.join(cogs_path, f'{extension}.py')
+                            spec = importlib.util.spec_from_file_location(extension, module_path)
+                            module = importlib.util.module_from_spec(spec)
+                            spec.loader.exec_module(module)
+                            await module.setup(bot=bot)
+                            # await bot.load_extension(extension, package=cogs_path)
+                            print(f"Loaded extension '{extension}'")
+                        except Exception as e:
+                            exception = f"{type(e).__name__}: {e}"
+                            print(f"Failed to load extension {extension}\n{exception}")
         else:
             # The code is being run normally
             bot_dir = os.path.dirname(__file__)
             cogs_path = os.path.join(bot_dir, "cogs")
-
-        for file in os.listdir(cogs_path):
-            if file.endswith(".py"):
-                extension = file[:-3]
-                if extension != "__init__":
-                    try:
-                        await bot.load_extension(f".cogs.{extension}", package="discordai.bot")
-                        print(f"Loaded extension '{extension}'")
-                    except Exception as e:
-                        exception = f"{type(e).__name__}: {e}"
-                        print(f"Failed to load extension {extension}\n{exception}")
+            for file in os.listdir(cogs_path):
+                if file.endswith(".py"):
+                    extension = file[:-3]
+                    if extension != "__init__":
+                        try:
+                            await bot.load_extension(f".cogs.{extension}", package="discordai.bot")
+                            print(f"Loaded extension '{extension}'")
+                        except Exception as e:
+                            exception = f"{type(e).__name__}: {e}"
+                            print(f"Failed to load extension {extension}\n{exception}")
 
     asyncio.run(load_cogs())
     bot.run(config["token"])
