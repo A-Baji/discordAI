@@ -22,12 +22,18 @@ Now that you have your own discord bot token and openAI API key, you can start u
 
 The model creation process can be broken down into three steps: downloading the logs of a specified channel, parsing the logs into an openAI-compatible dataset, and then training an openAI model using that dataset.
 
-Pick a channel and user that you want to use for your custom model and run `discordai model create -c <channel_id> -u "<username#id>" --dirty`. You can follow [this guide](https://turbofuture.com/internet/Discord-Channel-ID) to learn how to get a channel's ID. Make sure that you include the full username with the #id, and wrap it in quotes if it contains spaces. The `--dirty` flag prevents the outputted dataset files from being deleted. Downloaded chat logs get saved and reused, but you can set the `--redownload` flag if you want to update the logs.
+Pick a channel and user that you want to use for your custom model and run:
+
+`discordai model create -c <channel_id> -u "<username#id>" --dirty`
+
+You can follow [this guide](https://turbofuture.com/internet/Discord-Channel-ID) to learn how to get a channel's ID. Make sure that you include the full username with the #id, and wrap it in quotes if it contains spaces. The `--dirty` flag prevents the outputted dataset files from being deleted. Downloaded chat logs get saved and reused, but you can set the `--redownload` flag if you want to update the logs.
 
 You may have noticed the lack of a model customization process occurring after running that command. This is because no base model was selected, but before you specify a base model, you should analyze the generated dataset located in the directory mentioned in the logs. Chat messages are parsed into a dataset by grouping individual messages sent within a certain timeframe into "thoughts", where each thought is a completion in the dataset. The default for this timeframe is 10 seconds. If your dataset looks a bit off, try different timeframe settings using the `-t` option: 
+
 `discordai model create -c <channel_id> -u "<username#id>" -t <timeframe> --dirty`
 
 After you've found a good timeframe setting, you will want to manage your dataset's size. The larger your dataset is, the more openAI credits it will cost to create a custom model. By default, the max dataset size is set to 1000. If your dataset exceeds this limit, it will be reduced using either a "first", "last", "middle", or "even" reduction method. The "first" method will select the first n messages, "last" will select the last n, "middle" will select the middle n, and "even" will select an even distribution of n messages. The default reduction mode is even. You can set the max dataset size and reduction mode using the `-m` and `-r` options: 
+
 `discordai model create -c <channel_id> -u "<username#id>" -t <timeframe> -m <max_size> -r <reduction_mode> --dirty`
 
 If you are planning on creating multiple models, you may want to get your hands on multiple openAI API keys in order to maximize the free credit usage. You can assign specific api keys to custom models using the `-o` option. Otherwise, the key provided in your config will be used.
@@ -35,6 +41,7 @@ If you are planning on creating multiple models, you may want to get your hands 
 Now that you have fine tuned your dataset, you can finally begin the customization process by specifying a base model. OpenAI has four base [models](https://beta.openai.com/docs/models/gpt-3): davinci, curie, babbage, and ada, in order of most advanced to least advanced. Generally you will want to use davinci, but it is also the most expensive model as well as the longest to customize. Select your base model with the `-b` option.
 
 Your final command should look something like this: 
+
 `discordai model create -c <channel_id> -u "<username#id>" -t <timeframe> -m <max_size> -r <reduction_mode> -b <base_model>`
 ### Test the new model
 After the customization process is complete, it's time test your new model to figure out the best settings for it. Grab the model id provided in the logs of the customization process, or use `discordai model list --simple` to get a list of your model ids. Start up your bot with `discordai bot start` and head over to a discord channel that your bot is in. For starters, try entering `/customai model:<model_id> promp:<test_prompt>` and see what you get. 
@@ -43,11 +50,15 @@ Typically, models complete prompts by answering them. For example, if you ask th
 
 With this understanding of how prompts work, you will want to try out different values for the other options of the `/customai` command in order to figure out what the best settings are for your model. A description of each option is listed when you type the command, but for more information you can visit openAI's [documentation](https://beta.openai.com/docs/api-reference/completions).
 ### Create a new slash command for the model
-Once you've found the best settings for your model, you can create a new slash command for your discord bot that will use your model by default: `discordai bot commands new -n <command_name> -i <model_id> -t <temp_default> -p <pres_default> -f <freq_default> -m <max_tokens_default>`
+Once you've found the best settings for your model, you can create a new slash command for your discord bot that will use your model by default:
+
+`discordai bot commands new -n <command_name> -i <model_id> -t <temp_default> -p <pres_default> -f <freq_default> -m <max_tokens_default>`
 
 The options after `-n` and `-i` are to set the *defaults* for the slash command. Alternate values can be used when calling the command in discord, just like how `/openai` and `/customai` work. If your model was created using a different openAI API key from the one in your config, you will have to specify it using the `-o` option.
 
-Slash commands can be updated at any time by calling `discordai bot commands new` with the same <command_name> but different default values. You can also delete slash commands with `discordai bot commands delete -n <command_name>`.
+Slash commands can be updated at any time by calling `discordai bot commands new` with the same <command_name> but different default values. You can also delete slash commands:
+
+`discordai bot commands delete -n <command_name>`.
 
 After creating a new slash command, remember to sync your slash commands with discord's servers by running `discordai bot start --sync`, or by using `@bot_name sync global` in discord.
 
