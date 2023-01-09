@@ -52,7 +52,7 @@ Slash commands can be updated at any time by calling `discordai bot commands new
 After creating a new slash command, remember to sync your slash commands with discord's servers by running `discordai bot start --sync`, or by using `@bot_name sync global` in discord.
 
 ### Questions
-If you have any questions, feel free to make a new post in [discussions](https://github.com/A-Baji/discordAI/discussions/categories/q-a).
+If you have any questions, feel free to make a new post in [discussions](https://github.com/A-Baji/discordAI/discussions/categories/q-a). If you encounter any issues while using discordAI, make sure to create a new [issue](https://github.com/A-Baji/discordAI/issues).
 
 ## Commands
 ### Bot
