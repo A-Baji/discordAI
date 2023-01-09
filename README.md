@@ -1,7 +1,7 @@
 # DiscordAI
 DiscordAI is CLI package that you can use to run your discord bot. You can create customized openAI models based on a discord channel and user, and then add new slash commands to your bot to use these custom models to create openAI completions.
 
-DiscordAI is a parent module of [discordAI-modelizer](https://github.com/A-Baji/discordAI-modelizer).
+DiscordAI is a parent module of [DiscordAI Modelizer](https://github.com/A-Baji/discordAI-modelizer).
 
 ## Installation
 ### Executable
@@ -24,17 +24,17 @@ Now that you have your own discord bot token and openAI API key, you can start u
 
 The model creation process can be broken down into three steps: downloading the logs of a specified channel, parsing the logs into an openAI-compatible dataset, and then training an openAI model using that dataset.
 
-Pick a channel and user that you want to use for your custom model and run:
+Pick a channel and user whose chat logs you want to use for creating your custom model and run:
 
 `discordai model create -c <channel_id> -u "<username#id>" --dirty`
 
-You can follow [this guide](https://turbofuture.com/internet/Discord-Channel-ID) to learn how to get a channel's ID. Make sure that you include the full username with the #id, and wrap it in quotes if it contains spaces. The `--dirty` flag prevents the outputted dataset files from being deleted. Downloaded chat logs get saved and reused, but you can set the `--redownload` flag if you want to update the logs.
+You can follow [this guide](https://turbofuture.com/internet/Discord-Channel-ID) to learn how to find a channel's ID. Make sure that you include the full username with the #id, and wrap it in quotes if it contains spaces. The `--dirty` flag prevents the outputted dataset files from being deleted. Downloaded chat logs get saved and reused, but you can set the `--redownload` flag if you want to update the logs.
 
 You may have noticed the lack of a model customization process occurring after running that command. This is because no base model was selected, but before you specify a base model, you should analyze the generated dataset located in the directory mentioned in the logs. Chat messages are parsed into a dataset by grouping individual messages sent within a certain timeframe into "thoughts", where each thought is a completion in the dataset. The default for this timeframe is 10 seconds. If your dataset looks a bit off, try different timeframe settings using the `-t` option: 
 
 `discordai model create -c <channel_id> -u "<username#id>" -t <timeframe> --dirty`
 
-After you've found a good timeframe setting, you will want to manage your dataset's size. The larger your dataset is, the more openAI credits it will cost to create a custom model. By default, the max dataset size is set to 1000. If your dataset exceeds this limit, it will be reduced using either a "first", "last", "middle", or "even" reduction method. The "first" method will select the first n messages, "last" will select the last n, "middle" will select the middle n, and "even" will select an even distribution of n messages. The default reduction mode is even. You can set the max dataset size and reduction mode using the `-m` and `-r` options: 
+After you've found a good timeframe setting, you will want to manage your dataset's size. The larger your dataset, the more openAI credits it will cost to create a custom model. By default, the max dataset size is set to 1000. If your dataset exceeds this limit, it will be reduced using either a "first", "last", "middle", or "even" reduction method. The "first" method will select the first n messages, "last" will select the last n, "middle" will select the middle n, and "even" will select an even distribution of n messages. The default reduction method is even. You can set the max dataset size and reduction mode using the `-m` and `-r` options: 
 
 `discordai model create -c <channel_id> -u "<username#id>" -t <timeframe> -m <max_size> -r <reduction_mode> --dirty`
 
