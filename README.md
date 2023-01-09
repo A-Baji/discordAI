@@ -22,12 +22,18 @@ Now that you have your own discord bot token and openAI API key, you can start u
 
 The model creation process can be broken down into three steps: downloading the logs of a specified channel, parsing the logs into an openAI-compatible dataset, and then training an openAI model using that dataset.
 
-Pick a channel and user that you want to use for your custom model and run `discordai model create -c <channel_id> -u "<username#id>" --dirty`. You can follow [this guide](https://turbofuture.com/internet/Discord-Channel-ID) to learn how to get a channel's ID. Make sure that you include the full username with the #id, and wrap it in quotes if it contains spaces. The `--dirty` flag prevents the outputted dataset files from being deleted. Downloaded chat logs get saved and reused, but you can set the `--redownload` flag if you want to update the logs.
+Pick a channel and user that you want to use for your custom model and run:
+
+`discordai model create -c <channel_id> -u "<username#id>" --dirty`
+
+You can follow [this guide](https://turbofuture.com/internet/Discord-Channel-ID) to learn how to get a channel's ID. Make sure that you include the full username with the #id, and wrap it in quotes if it contains spaces. The `--dirty` flag prevents the outputted dataset files from being deleted. Downloaded chat logs get saved and reused, but you can set the `--redownload` flag if you want to update the logs.
 
 You may have noticed the lack of a model customization process occurring after running that command. This is because no base model was selected, but before you specify a base model, you should analyze the generated dataset located in the directory mentioned in the logs. Chat messages are parsed into a dataset by grouping individual messages sent within a certain timeframe into "thoughts", where each thought is a completion in the dataset. The default for this timeframe is 10 seconds. If your dataset looks a bit off, try different timeframe settings using the `-t` option: 
+
 `discordai model create -c <channel_id> -u "<username#id>" -t <timeframe> --dirty`
 
 After you've found a good timeframe setting, you will want to manage your dataset's size. The larger your dataset is, the more openAI credits it will cost to create a custom model. By default, the max dataset size is set to 1000. If your dataset exceeds this limit, it will be reduced using either a "first", "last", "middle", or "even" reduction method. The "first" method will select the first n messages, "last" will select the last n, "middle" will select the middle n, and "even" will select an even distribution of n messages. The default reduction mode is even. You can set the max dataset size and reduction mode using the `-m` and `-r` options: 
+
 `discordai model create -c <channel_id> -u "<username#id>" -t <timeframe> -m <max_size> -r <reduction_mode> --dirty`
 
 If you are planning on creating multiple models, you may want to get your hands on multiple openAI API keys in order to maximize the free credit usage. You can assign specific api keys to custom models using the `-o` option. Otherwise, the key provided in your config will be used.
@@ -35,6 +41,7 @@ If you are planning on creating multiple models, you may want to get your hands 
 Now that you have fine tuned your dataset, you can finally begin the customization process by specifying a base model. OpenAI has four base [models](https://beta.openai.com/docs/models/gpt-3): davinci, curie, babbage, and ada, in order of most advanced to least advanced. Generally you will want to use davinci, but it is also the most expensive model as well as the longest to customize. Select your base model with the `-b` option.
 
 Your final command should look something like this: 
+
 `discordai model create -c <channel_id> -u "<username#id>" -t <timeframe> -m <max_size> -r <reduction_mode> -b <base_model>`
 ### Test the new model
 After the customization process is complete, it's time test your new model to figure out the best settings for it. Grab the model id provided in the logs of the customization process, or use `discordai model list --simple` to get a list of your model ids. Start up your bot with `discordai bot start` and head over to a discord channel that your bot is in. For starters, try entering `/customai model:<model_id> promp:<test_prompt>` and see what you get. 
