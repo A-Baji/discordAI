@@ -58,7 +58,7 @@ The options after `-n` and `-i` are to set the *defaults* for the slash command.
 
 Slash commands can be updated at any time by calling `discordai bot commands new` with the same <command_name> but different default values. You can also delete slash commands:
 
-`discordai bot commands delete -n <command_name>`.
+`discordai bot commands delete -n <command_name>`
 
 After creating a new slash command, remember to sync your slash commands with discord's servers by running `discordai bot start --sync`, or by using `@bot_name sync global` in discord.
 
