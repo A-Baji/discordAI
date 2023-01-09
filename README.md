@@ -56,7 +56,9 @@ Once you've found the best settings for your model, you can create a new slash c
 
 The options after `-n` and `-i` are to set the *defaults* for the slash command. Alternate values can be used when calling the command in discord, just like how `/openai` and `/customai` work. If your model was created using a different openAI API key from the one in your config, you will have to specify it using the `-o` option.
 
-Slash commands can be updated at any time by calling `discordai bot commands new` with the same <command_name> but different default values. You can also delete slash commands with `discordai bot commands delete -n <command_name>`.
+Slash commands can be updated at any time by calling `discordai bot commands new` with the same <command_name> but different default values. You can also delete slash commands:
+
+`discordai bot commands delete -n <command_name>`.
 
 After creating a new slash command, remember to sync your slash commands with discord's servers by running `discordai bot start --sync`, or by using `@bot_name sync global` in discord.
 
