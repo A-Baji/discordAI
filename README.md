@@ -1,6 +1,8 @@
 # DiscordAI
 DiscordAI is CLI package that you can use to run your discord bot. You can create customized openAI models based on a discord channel and user, and then add new slash commands to your bot to use these custom models to create openAI completions.
 
+DiscordAI is a parent module of [discordAI-modelizer](https://github.com/A-Baji/discordAI-modelizer).
+
 ## Installation
 ### Executable
 Download the CLI executable for your OS from the [latest release](https://github.com/A-Baji/discordAI/releases/latest). Unfortunately, the Mac version of the executable is not available due to stability issues.
@@ -43,6 +45,8 @@ Now that you have fine tuned your dataset, you can finally begin the customizati
 Your final command should look something like this: 
 
 `discordai model create -c <channel_id> -u "<username#id>" -t <timeframe> -m <max_size> -r <reduction_mode> -b <base_model>`
+
+If you find the training step to cost too many credits with your current options, you can cancel it with `discordai job cancel -j <job_id>`, and then either lower your max dataset size, or choose a different discord channel and/or user. You can get a list of all your jobs with `discordai job list --simple`.
 ### Test the new model
 After the customization process is complete, it's time test your new model to figure out the best settings for it. Grab the model id provided in the logs of the customization process, or use `discordai model list --simple` to get a list of your model ids. Start up your bot with `discordai bot start` and head over to a discord channel that your bot is in. For starters, try entering `/customai model:<model_id> promp:<test_prompt>` and see what you get. 
 
@@ -56,9 +60,7 @@ Once you've found the best settings for your model, you can create a new slash c
 
 The options after `-n` and `-i` are to set the *defaults* for the slash command. Alternate values can be used when calling the command in discord, just like how `/openai` and `/customai` work. If your model was created using a different openAI API key from the one in your config, you will have to specify it using the `-o` option.
 
-Slash commands can be updated at any time by calling `discordai bot commands new` with the same <command_name> but different default values. You can also delete slash commands:
-
-`discordai bot commands delete -n <command_name>`
+Slash commands can be updated at any time by calling `discordai bot commands new` with the same <command_name> but different default values. You can also delete slash commands with `discordai bot commands delete -n <command_name>`.
 
 After creating a new slash command, remember to sync your slash commands with discord's servers by running `discordai bot start --sync`, or by using `@bot_name sync global` in discord.
 
