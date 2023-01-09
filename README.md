@@ -50,7 +50,9 @@ Typically, models complete prompts by answering them. For example, if you ask th
 
 With this understanding of how prompts work, you will want to try out different values for the other options of the `/customai` command in order to figure out what the best settings are for your model. A description of each option is listed when you type the command, but for more information you can visit openAI's [documentation](https://beta.openai.com/docs/api-reference/completions).
 ### Create a new slash command for the model
-Once you've found the best settings for your model, you can create a new slash command for your discord bot that will use your model by default: `discordai bot commands new -n <command_name> -i <model_id> -t <temp_default> -p <pres_default> -f <freq_default> -m <max_tokens_default>`
+Once you've found the best settings for your model, you can create a new slash command for your discord bot that will use your model by default:
+
+`discordai bot commands new -n <command_name> -i <model_id> -t <temp_default> -p <pres_default> -f <freq_default> -m <max_tokens_default>`
 
 The options after `-n` and `-i` are to set the *defaults* for the slash command. Alternate values can be used when calling the command in discord, just like how `/openai` and `/customai` work. If your model was created using a different openAI API key from the one in your config, you will have to specify it using the `-o` option.
 
