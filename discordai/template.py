@@ -69,10 +69,10 @@ def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_
     if getattr(sys, 'frozen', False):
         # The code is being run as a frozen executable
         data_dir = appdirs.user_data_dir(appname="discordai")
-        cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+        cogs_path = os.path.join(data_dir, "discordai", "bot", "cogs")
         if not os.path.exists(cogs_path):
             data_dir = sys._MEIPASS
-            og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+            og_cogs_path = os.path.join(data_dir, "discordai", "bot", "cogs")
             shutil.copytree(og_cogs_path, os.path.join(data_dir, cogs_path))
     else:
         # The code is being run normally
@@ -99,10 +99,10 @@ def delete_command(command_name: str):
     if getattr(sys, 'frozen', False):
         # The code is being run as a frozen executable
         data_dir = appdirs.user_data_dir(appname="discordai")
-        cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+        cogs_path = os.path.join(data_dir, "discordai", "bot", "cogs")
         if not os.path.exists(cogs_path):
             data_dir = sys._MEIPASS
-            og_cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
+            og_cogs_path = os.path.join(data_dir, "discordai", "bot", "cogs")
             shutil.copytree(og_cogs_path, os.path.join(data_dir, cogs_path))
     else:
         # The code is being run normally
