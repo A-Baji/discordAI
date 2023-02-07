@@ -3,7 +3,7 @@ import pathlib
 import json
 import appdirs
 
-config_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
+config_dir = appdirs.user_data_dir(appname="discordai")
 
 
 def get():

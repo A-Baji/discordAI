@@ -117,7 +117,7 @@ def start_bot(config, sync=False):
         """
         if getattr(sys, 'frozen', False):
             # The code is being run as a frozen executable
-            data_dir = appdirs.user_data_dir(appauthor="Adib Baji", appname="discordai")
+            data_dir = appdirs.user_data_dir(appname="discordai")
             cogs_path = os.path.join(data_dir, "discordai/bot/cogs")
             if not os.path.exists(cogs_path):
                 data_dir = sys._MEIPASS
