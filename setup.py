@@ -17,6 +17,7 @@ with open(pathlib.Path(here, "requirements.txt")) as f:
 setuptools.setup(
     name=package.__name__,
     version=package.__version__,
+    author="Adib Baji",
     author_email="bidabaji@gmail.com",
     description="A discord bot package that utilizes openAI to create custom AI models out of your chat history",
     long_description=pathlib.Path("README.md").read_text(),
