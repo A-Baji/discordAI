@@ -17,6 +17,7 @@ import importlib.util
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot, Context
+from discordai import __version__ as version
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -33,6 +34,7 @@ def start_bot(config, sync=False):
         The code in this even is executed when the bot is ready
         """
         print(f"Logged in as {bot.user.name}")
+        print(f"DiscordAi version: {version}")
         print(f"discord.py API version: {discord.__version__}")
         print(f"Python version: {platform.python_version()}")
         print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
