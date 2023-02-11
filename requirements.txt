@@ -2,4 +2,4 @@ discord.py
 openai
 pandas
 appdirs
-discordai_modelizer @ git+https://github.com/A-Baji/discordAI-modelizer.git@513fe1cbeab01e380d49c07bfa2154c2bcd4726f
+discordai_modelizer @ git+https://github.com/A-Baji/discordAI-modelizer.git@1.0.1
