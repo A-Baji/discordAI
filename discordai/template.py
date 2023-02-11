@@ -1,9 +1,7 @@
 import os
 import pathlib
-import pkgutil
 import shutil
 import sys
-import tempfile
 import appdirs
 
 
@@ -61,23 +59,23 @@ async def setup(bot):
     await bot.add_cog({class_name}(bot))
 """
 
-config_dir = appdirs.user_data_dir(appname="discordai")
+config_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
 
 
 def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_default: float, freq_default: float,
                     max_tokens_default: int, stop_default: bool, openai_key: str):
     if getattr(sys, 'frozen', False):
         # The code is being run as a frozen executable
-        data_dir = appdirs.user_data_dir(appname="discordai")
-        cogs_path = os.path.join(data_dir, "discordai", "bot", "cogs")
+        data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
+        cogs_path = data_dir / "discordai" / "bot" / "cogs"
         if not os.path.exists(cogs_path):
-            data_dir = sys._MEIPASS
-            og_cogs_path = os.path.join(data_dir, "discordai", "bot", "cogs")
-            shutil.copytree(og_cogs_path, os.path.join(data_dir, cogs_path))
+            data_dir = pathlib.Path(sys._MEIPASS)
+            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
+            shutil.copytree(og_cogs_path, data_dir / cogs_path)
     else:
         # The code is being run normally
-        template_dir = os.path.dirname(__file__)
-        cogs_path = os.path.join(os.path.join(template_dir, "bot"), "cogs")
+        template_dir = pathlib.Path(os.path.dirname(__file__))
+        cogs_path = template_dir / "bot"/ "cogs"
     with open(pathlib.Path(cogs_path, f"{command_name}.py"), "w") as f:
         os.makedirs(cogs_path, exist_ok=True)
         f.write(
@@ -98,16 +96,16 @@ def delete_command(command_name: str):
         return
     if getattr(sys, 'frozen', False):
         # The code is being run as a frozen executable
-        data_dir = appdirs.user_data_dir(appname="discordai")
-        cogs_path = os.path.join(data_dir, "discordai", "bot", "cogs")
+        data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
+        cogs_path = data_dir / "discordai" / "bot" / "cogs"
         if not os.path.exists(cogs_path):
-            data_dir = sys._MEIPASS
-            og_cogs_path = os.path.join(data_dir, "discordai", "bot", "cogs")
-            shutil.copytree(og_cogs_path, os.path.join(data_dir, cogs_path))
+            data_dir = pathlib.Path(sys._MEIPASS)
+            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
+            shutil.copytree(og_cogs_path, data_dir / cogs_path)
     else:
         # The code is being run normally
-        template_dir = os.path.dirname(__file__)
-        cogs_path = os.path.join(os.path.join(template_dir, "bot"), "cogs")
+        template_dir = pathlib.Path(os.path.dirname(__file__))
+        cogs_path = template_dir / "bot" / "cogs"
     try:
         os.remove(pathlib.Path(cogs_path, f"{command_name}.py"))
         print(f"Successfully deleted command: /{command_name}")

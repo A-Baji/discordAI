@@ -8,6 +8,7 @@ Version: 5.4.1
 
 import asyncio
 import os
+import pathlib
 import platform
 import shutil
 import sys
@@ -119,18 +120,18 @@ def start_bot(config, sync=False):
         """
         if getattr(sys, 'frozen', False):
             # The code is being run as a frozen executable
-            data_dir = appdirs.user_data_dir(appname="discordai")
-            cogs_path = os.path.join(data_dir, "discordai", "bot", "cogs")
+            data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
+            cogs_path = data_dir / "discordai" / "bot" / "cogs"
             if not os.path.exists(cogs_path):
-                data_dir = sys._MEIPASS
-                og_cogs_path = os.path.join(data_dir, "discordai", "bot", "cogs")
-                shutil.copytree(og_cogs_path, os.path.join(data_dir, cogs_path))
+                data_dir = pathlib.Path(sys._MEIPASS)
+                og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
+                shutil.copytree(og_cogs_path, data_dir / cogs_path)
             for file in os.listdir(cogs_path):
                 if file.endswith(".py"):
                     extension = file[:-3]
                     if extension != "__init__":
                         try:
-                            module_path = os.path.join(cogs_path, f'{extension}.py')
+                            module_path = cogs_path / f'{extension}.py'
                             spec = importlib.util.spec_from_file_location(extension, module_path)
                             module = importlib.util.module_from_spec(spec)
                             spec.loader.exec_module(module)
@@ -142,8 +143,8 @@ def start_bot(config, sync=False):
                             print(f"Failed to load extension {extension}\n{exception}")
         else:
             # The code is being run normally
-            bot_dir = os.path.dirname(__file__)
-            cogs_path = os.path.join(bot_dir, "cogs")
+            bot_dir = pathlib.Path(os.path.dirname(__file__))
+            cogs_path = bot_dir / "cogs"
             for file in os.listdir(cogs_path):
                 if file.endswith(".py"):
                     extension = file[:-3]
