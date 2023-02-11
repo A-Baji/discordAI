@@ -125,7 +125,7 @@ def start_bot(config, sync=False):
             if not os.path.exists(cogs_path):
                 data_dir = pathlib.Path(sys._MEIPASS)
                 og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-                shutil.copytree(og_cogs_path, data_dir / cogs_path)
+                shutil.copytree(og_cogs_path, cogs_path)
             for file in os.listdir(cogs_path):
                 if file.endswith(".py"):
                     extension = file[:-3]
