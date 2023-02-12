@@ -71,7 +71,7 @@ def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_
         if not os.path.exists(cogs_path):
             data_dir = pathlib.Path(sys._MEIPASS)
             og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-            shutil.copytree(og_cogs_path, data_dir / cogs_path)
+            shutil.copytree(og_cogs_path, cogs_path)
     else:
         # The code is being run normally
         template_dir = pathlib.Path(os.path.dirname(__file__))
@@ -101,7 +101,7 @@ def delete_command(command_name: str):
         if not os.path.exists(cogs_path):
             data_dir = pathlib.Path(sys._MEIPASS)
             og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-            shutil.copytree(og_cogs_path, data_dir / cogs_path)
+            shutil.copytree(og_cogs_path, cogs_path)
     else:
         # The code is being run normally
         template_dir = pathlib.Path(os.path.dirname(__file__))
