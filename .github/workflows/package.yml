@@ -69,7 +69,7 @@ jobs:
     - name: Windows CLI Package
       if: ${{matrix.os == 'windows-latest'}}
       run: |
-        pyinstaller discordai/command_line.py --console --name=discordai --add-binary='discordai/bot/cogs;discordai/bot/cogs' --hidden-import=openai --collect-data=discordai_modelizer --collect-all=openai
+        pyinstaller discordai/command_line.py --console --onefile --name=discordai --add-binary='discordai/bot/cogs;discordai/bot/cogs' --hidden-import=openai --collect-data=discordai_modelizer --collect-all=openai
         Compress-Archive -Path dist\*discordai* -DestinationPath discordai-windows.zip
     - name: Mac CLI Package
       if: ${{matrix.os == 'macos-latest'}}
