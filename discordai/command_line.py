@@ -110,6 +110,13 @@ def discordai():
         dest='stop_default',
         help="Set the stop option to use for completions to True",
     )
+    new_cmd_optional_named.add_argument(
+        "--bolden",
+        action='store_true',
+        required=False,
+        dest='bolden',
+        help="Boldens the original prompt in the completion output",
+    )
 
     delete_cmd = bot_cmds_commands_subcommand.add_parser(
         "delete", description="Delete a slash command from your bot"
@@ -374,7 +381,8 @@ def discordai():
         if args.subcommand == "commands":
             if args.subsubcommand == "new":
                 template.gen_new_command(args.model_id, args.command_name, args.temp_default, args.pres_default,
-                                         args.freq_default, args.max_tokens_default, args.stop_default, args.openai_key)
+                                         args.freq_default, args.max_tokens_default, args.stop_default, args.openai_key,
+                                         args.bolden)
             elif args.subsubcommand == "delete":
                 template.delete_command(args.command_name)
     elif args.command == "model":
