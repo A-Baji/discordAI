@@ -110,6 +110,13 @@ def discordai():
         dest='stop_default',
         help="Set the stop option to use for completions to True",
     )
+    new_cmd_optional_named.add_argument(
+        "--bolden",
+        action='store_true',
+        required=False,
+        dest='bolden',
+        help="Boldens the original prompt in the completion output",
+    )
 
     delete_cmd = bot_cmds_commands_subcommand.add_parser(
         "delete", description="Delete a slash command from your bot"
@@ -179,12 +186,28 @@ def discordai():
         help="The base model to use for customization. If none, then skips training step: DEFAULT=none",
     )
     model_create_optional_named.add_argument(
-        "-t", "--thought-time",
+        "--ttime", "--thought-time",
         type=int,
         default=10,
         required=False,
         dest='thought_time',
         help="The max amount of time in seconds to consider two individual messages to be part of the same \"thought\": DEFAULT=10",
+    )
+    model_create_optional_named.add_argument(
+        "--tmax", "--thought-max",
+        type=int,
+        default=None,
+        required=False,
+        dest='thought_max',
+        help="The max in words length of each thought: DEFAULT=None",
+    )
+    model_create_optional_named.add_argument(
+        "--tmin", "--thought-min",
+        type=int,
+        default=4,
+        required=False,
+        dest='thought_min',
+        help="The minimum in words length of each thought: DEFAULT=4",
     )
     model_create_optional_named.add_argument(
         "-m", "--max-entries",
@@ -301,6 +324,13 @@ def discordai():
         dest='openai_key',
         help="The openAI API key associated with the job to see the status for: DEFAULT=config.openai_key",
     )
+    job_status_optional_named.add_argument(
+        "--events",
+        action='store_true',
+        required=False,
+        dest='events',
+        help="Simplify the output to just the event list",
+    )
 
     job_cancel = job_subcommand.add_parser(
         "cancel", description="Cancel an openAI customization job"
@@ -351,7 +381,8 @@ def discordai():
         if args.subcommand == "commands":
             if args.subsubcommand == "new":
                 template.gen_new_command(args.model_id, args.command_name, args.temp_default, args.pres_default,
-                                         args.freq_default, args.max_tokens_default, args.stop_default, args.openai_key)
+                                         args.freq_default, args.max_tokens_default, args.stop_default, args.openai_key,
+                                         args.bolden)
             elif args.subsubcommand == "delete":
                 template.delete_command(args.command_name)
     elif args.command == "model":
@@ -359,9 +390,9 @@ def discordai():
             openai_wrapper.list_models(args.openai_key, args.simple)
         if args.subcommand == "create":
             customize.create_model(config["token"], args.openai_key, args.channel, args.user,
-                                   thought_time=args.thought_time, max_entry_count=args.max_entries,
-                                   reduce_mode=args.reduce_mode, base_model=args.base_model, clean=args.dirty,
-                                   redownload=args.redownload)
+                                   thought_time=args.thought_time, thought_max=args.thought_max, thought_min=args.thought_min,
+                                   max_entry_count=args.max_entries, reduce_mode=args.reduce_mode, base_model=args.base_model, 
+                                   clean=args.dirty, redownload=args.redownload)
         if args.subcommand == "delete":
             openai_wrapper.delete_model(args.openai_key, args.model_id)
     elif args.command == "job":
@@ -370,7 +401,7 @@ def discordai():
         if args.subcommand == "follow":
             openai_wrapper.follow_job(args.openai_key, args.job_id)
         if args.subcommand == "status":
-            openai_wrapper.get_status(args.openai_key, args.job_id)
+            openai_wrapper.get_status(args.openai_key, args.job_id, args.events)
         if args.subcommand == "cancel":
             openai_wrapper.cancel_job(args.openai_key, args.job_id)
     elif args.command == "config":

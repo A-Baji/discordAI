@@ -30,13 +30,13 @@ Pick a channel and user whose chat logs you want to use for creating your custom
 
 You can follow [this guide](https://turbofuture.com/internet/Discord-Channel-ID) to learn how to find a channel's ID. Make sure that you include the full username with the #id, and wrap it in quotes if it contains spaces. The `--dirty` flag prevents the outputted dataset files from being deleted. Downloaded chat logs get saved and reused, but you can set the `--redownload` flag if you want to update the logs.
 
-You may have noticed the lack of a model customization process occurring after running that command. This is because no base model was selected, but before you specify a base model, you should analyze the generated dataset located in the directory mentioned in the logs. Chat messages are parsed into a dataset by grouping individual messages sent within a certain timeframe into "thoughts", where each thought is a completion in the dataset. The default for this timeframe is 10 seconds. If your dataset looks a bit off, try different timeframe settings using the `-t` option: 
+You may have noticed the lack of a model customization process occurring after running that command. This is because no base model was selected, but before you specify a base model, you should analyze the generated dataset located in the directory mentioned in the logs. Chat messages are parsed into a dataset by grouping individual messages sent within a certain timeframe into "thoughts", where each thought is a completion in the dataset. The default for this timeframe is 10 seconds. The length of each thought must also be within the minimum and max thought length. The defaults for these are 4 words and `None`, or optional. If your dataset looks a bit off, try different settings using the `--ttime`, `--tmin`, and `--ttmax` options: 
 
-`discordai model create -c <channel_id> -u "<username#id>" -t <timeframe> --dirty`
+`discordai model create -c <channel_id> -u "<username#id>" --ttime <timeframe> --tmax <thought_max> --tmin <thought_min> --dirty`
 
-After you've found a good timeframe setting, you will want to manage your dataset's size. The larger your dataset, the more openAI credits it will cost to create a custom model. By default, the max dataset size is set to 1000. If your dataset exceeds this limit, it will be reduced using either a "first", "last", "middle", or "even" reduction method. The "first" method will select the first n messages, "last" will select the last n, "middle" will select the middle n, and "even" will select an even distribution of n messages. The default reduction method is even. You can set the max dataset size and reduction mode using the `-m` and `-r` options: 
+After you've found good thought settings, you will want to manage your dataset's size. The larger your dataset, the more openAI credits it will cost to create a custom model. By default, the max dataset size is set to 1000. If your dataset exceeds this limit, it will be reduced using either a "first", "last", "middle", or "even" reduction method. The "first" method will select the first n messages, "last" will select the last n, "middle" will select the middle n, and "even" will select an even distribution of n messages. The default reduction method is even. You can set the max dataset size and reduction mode using the `-m` and `-r` options: 
 
-`discordai model create -c <channel_id> -u "<username#id>" -t <timeframe> -m <max_size> -r <reduction_mode> --dirty`
+`discordai model create -c <channel_id> -u "<username#id>" --ttime <timeframe> --tmax <thought_max> --tmin <thought_min> -m <max_size> -r <reduction_mode> --dirty`
 
 If you are planning on creating multiple models, you may want to get your hands on multiple openAI API keys in order to maximize the free credit usage. You can assign specific api keys to custom models using the `-o` option. Otherwise, the key provided in your config will be used.
 
@@ -44,7 +44,7 @@ Now that you have fine tuned your dataset, you can finally begin the customizati
 
 Your final command should look something like this: 
 
-`discordai model create -c <channel_id> -u "<username#id>" -t <timeframe> -m <max_size> -r <reduction_mode> -b <base_model>`
+`discordai model create -c <channel_id> -u "<username#id>" --ttime <timeframe> --tmax <thought_max> --tmin <thought_min> -m <max_size> -r <reduction_mode> -b <base_model>`
 
 If you find the training step to cost too many credits with your current options, you can cancel it with `discordai job cancel -j <job_id>`, and then either lower your max dataset size, or choose a different discord channel and/or user. You can get a list of all your jobs with `discordai job list --simple`.
 ### Test the new model
