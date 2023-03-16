@@ -24,7 +24,7 @@ class ImageAI(commands.Cog, name="imageai"):
     @app_commands.describe(
         prompt="The prompt to pass to openAI",
         size="256 | 512 | 1024 pixels:  Default=256")
-    async def openai(self, context: Context, prompt: str , size: str = "512"):
+    async def openai(self, context: Context, prompt: str , size: str = "256"):
         await context.defer()
         try:
             if size not in ["256","512","1024"]:
