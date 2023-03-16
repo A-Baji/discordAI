@@ -26,10 +26,11 @@ class {class_name}(commands.Cog, name="{command_name}"):
         presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2 Max=2 Default={pres_default}",
         frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2 Max=2 Default={freq_default}",
         max_tokens="The max number of tokens to generate. Each token costs credits: Default={max_tokens_default}",
-        stop="Whether to stop after the first sentence: Default={stop_default}")
+        stop="Whether to stop after the first sentence: Default={stop_default}",
+        bold="Whether to bolden the original prompt: Default={bold_default}")
     async def customai(self, context: Context, prompt: str = "", temp: float = {temp_default},
                        presence_penalty: float = {pres_default}, frequency_penalty: float = {freq_default}, max_tokens: int = {max_tokens_default},
-                       stop: bool = {stop_default}):
+                       stop: bool = {stop_default}, bold: bool = {bold_default}):
         temp = min(max(temp, 0), 1)
         presPen = min(max(presence_penalty, -2), 2)
         freqPen = min(max(frequency_penalty, -2), 2)
@@ -47,7 +48,7 @@ class {class_name}(commands.Cog, name="{command_name}"):
                 echo=False,
                 stop='.' if stop else None,
             )
-            await context.send(f"{{'**' if {bold} else ''}}{{prompt}}{{'**' if {bold} else ''}}{{response[\'choices\'][0][\'text\'][:2000]}}")
+            await context.send(f"{{'**' if bold and prompt else ''}}{{prompt}}{{'**' if bold and prompt else ''}}{{response[\'choices\'][0][\'text\'][:2000]}}")
         except Exception as error:
             print({error})
             await context.send(
@@ -63,7 +64,7 @@ config_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
 
 
 def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_default: float, freq_default: float,
-                    max_tokens_default: int, stop_default: bool, openai_key: str, bold_prompt: bool):
+                    max_tokens_default: int, stop_default: bool, openai_key: str, bold_default: bool):
     if getattr(sys, 'frozen', False):
         # The code is being run as a frozen executable
         data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
@@ -84,7 +85,7 @@ def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_
                 command_name=command_name, temp_default=float(temp_default),
                 pres_default=float(pres_default),
                 freq_default=float(freq_default),
-                max_tokens_default=max_tokens_default, stop_default=stop_default, openai_key=openai_key, bold = bold_prompt,
+                max_tokens_default=max_tokens_default, stop_default=stop_default, openai_key=openai_key, bold_default = bold_default,
                 error="f\"Failed to generate valid response for prompt: {prompt}\\nError: {error}\""))
         print(f"Successfully created new slash command: /{command_name} using model {model_id}")
 
