@@ -1,0 +1,18 @@
+# VERSION=$(cat discordai/version.py | grep -oP '\d+\.\d+\.\d+') docker compose up --build
+version: '2.4'
+services:
+  app:
+    build: .
+    image: discord-ai/discordai:${VERSION}
+    working_dir: /main
+    environment:
+      - DISCORD_TOKEN
+      - OPENAI_KEY
+    env_file: ./.env
+    volumes:
+      - ./discordai:/usr/local/lib/python3.11/site-packages/discordai
+    command:
+      - sh
+      - -c
+      - |
+        tail -f /dev/null

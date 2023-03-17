@@ -1,4 +1,10 @@
 config.json
+discordai/bot/cogs/*.py
+!discordai/bot/cogs/__init__.py
+!discordai/bot/cogs/customai.py
+!discordai/bot/cogs/imageai.py
+!discordai/bot/cogs/openai.py
+!discordai/bot/cogs/sync.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

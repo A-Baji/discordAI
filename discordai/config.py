@@ -13,8 +13,8 @@ def get():
     except FileNotFoundError as err:
         print("No config found. Please follow the steps to create one:")
         config = dict(
-            token=input("\nEnter your discord bot token: "),
-            openai_key=input("\nEnter your openAI key: ")
+            token=os.getenv("DISCORD_TOKEN") or input("\nEnter your discord bot token: "),
+            openai_key=os.getenv("OPENAI_KEY") or input("\nEnter your openAI key: ")
         )
         os.makedirs(config_dir, exist_ok=True)
         with open(pathlib.Path(config_dir, "config.json"), "w") as f:

@@ -111,11 +111,11 @@ def discordai():
         help="Set the stop option to use for completions to True",
     )
     new_cmd_optional_named.add_argument(
-        "--bolden",
+        "--bold_default",
         action='store_true',
         required=False,
-        dest='bolden',
-        help="Boldens the original prompt in the completion output",
+        dest='bold_default',
+        help="Set the bolden option for prompts to True",
     )
 
     delete_cmd = bot_cmds_commands_subcommand.add_parser(
@@ -382,7 +382,7 @@ def discordai():
             if args.subsubcommand == "new":
                 template.gen_new_command(args.model_id, args.command_name, args.temp_default, args.pres_default,
                                          args.freq_default, args.max_tokens_default, args.stop_default, args.openai_key,
-                                         args.bolden)
+                                         args.bold_default)
             elif args.subsubcommand == "delete":
                 template.delete_command(args.command_name)
     elif args.command == "model":
