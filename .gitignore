@@ -6,6 +6,7 @@ discordai/bot/cogs/*.py
 !discordai/bot/cogs/openai.py
 !discordai/bot/cogs/chatgpt.py
 !discordai/bot/cogs/sync.py
+init.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
