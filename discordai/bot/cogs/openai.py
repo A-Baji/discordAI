@@ -52,7 +52,7 @@ class OpenAI(commands.Cog, name="openai"):
                 presence_penalty=freqPen,
                 max_tokens=325
                 )
-                await context.send(f"{prompt}{response['choices'][0]['message']['content']}"[:2000])
+                await context.send(f"{prompt}\n{response['choices'][0]['message']['content']}"[:2000])
             else:
                 response = openai.Completion.create(
                     engine=model.value,
