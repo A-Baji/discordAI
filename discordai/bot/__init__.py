@@ -28,6 +28,7 @@ bot = Bot(command_prefix=commands.when_mentioned_or(
 
 def start_bot(config, sync=False):
     bot.config = config
+    bot.messages = []
 
     @bot.event
     async def on_ready() -> None:
