@@ -1,4 +1,4 @@
-# VERSION=$(cat discordai/version.py | grep -oP '\d+\.\d+\.\d+') INIT_FILE_MOUNT=./init.sh:/main/init.sh docker compose up --build
+# VERSION=$(cat discordai/version.py | grep -oP '\d+\.\d+\.\d+') docker compose up --build
 version: '2.4'
 services:
   app:
@@ -11,15 +11,10 @@ services:
     env_file: ./.env
     volumes:
       - ./discordai:/usr/local/lib/python3.11/site-packages/discordai
-      - ${INIT_FILE_MOUNT}
+      - ./init.sh:/main/init.sh
     command:
       - sh
       - -c
       - |
-        if [ -e init.sh ]
-        then
-            ./init.sh
-        else
-            echo "No init file found"
-        fi
+        ./init.sh
         discordai bot start
