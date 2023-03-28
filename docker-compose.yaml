@@ -8,6 +8,7 @@ services:
     environment:
       - DISCORD_TOKEN
       - OPENAI_KEY
+      - PYTHONUNBUFFERED=1
     env_file: ./.env
     volumes:
       - ./discordai:/usr/local/lib/python3.11/site-packages/discordai
