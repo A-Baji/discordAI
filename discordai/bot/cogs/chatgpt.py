@@ -61,8 +61,12 @@ class ChatGPT(commands.Cog, name="chatgpt"):
         temp = min(max(temp, 0), 1)
         presPen = min(max(presence_penalty, -2), 2)
         freqPen = min(max(frequency_penalty, -2), 2)
-        self.bot.messages.append({"role": role.value, "content": prompt})
-        messages = self.bot.messages
+
+        if context.guild.id not in self.bot.chat_messages:
+            self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": self.bot.chat_init[context.guild.id]}] if context.guild.id in self.bot.chat_init and self.bot.chat_init[context.guild.id] else []
+        self.bot.chat_messages[context.guild.id].append({"role": role.value, "content": prompt})
+        messages = self.bot.chat_messages[context.guild.id]
+
         token_cost = num_tokens_from_messages(messages, model)
         if 325 <= 4096-token_cost:
             warning = Warnings.low
@@ -85,6 +89,7 @@ class ChatGPT(commands.Cog, name="chatgpt"):
                     max_tokens=325 if 325 <= 4096-token_cost else token_cost
                 )
                 await context.send(f"{prompt}\n{response['choices'][0]['message']['content']}{warning.value}"[:2000])
+                self.bot.chat_messages[context.guild.id].append(response['choices'][0]['message'])
         except Exception as error:
             print(f"Failed to generate valid response for prompt: {prompt}\nError: {error}")
             await context.send(
@@ -96,8 +101,28 @@ class ChatGPT(commands.Cog, name="chatgpt"):
         description="Resets the chat history for chatGPT completions",
     )
     async def resetchat(self, context):
-        self.bot.messages = []
+        self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": self.bot.chat_init[context.guild.id]}] if context.guild.id in self.bot.chat_init and self.bot.chat_init[context.guild.id] else []
         await context.send("Chat history has been reset")
+
+    @commands.hybrid_command(
+        name="setchatinit",
+        description="Set the initialization message, a guide for the AI on how to respond to future chat messages",
+    )
+    @app_commands.describe(message="The init message for chatGPT completions. Omit to reset")
+    async def setchatinit(self, context, message: str = ""):
+        self.bot.chat_init[context.guild.id] = message
+        if message:
+            if context.guild.id in self.bot.chat_messages:
+                if self.bot.chat_messages[context.guild.id] and self.bot.chat_messages[context.guild.id][0]["role"] == "system":
+                    self.bot.chat_messages[context.guild.id][0] = {"role": "system", "content": self.bot.chat_init[context.guild.id]}
+                else:
+                    self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": self.bot.chat_init[context.guild.id]}] + self.bot.chat_messages[context.guild.id]
+            await context.send("Chat init message has been set")
+        else:
+            if context.guild.id in self.bot.chat_messages:
+                if self.bot.chat_messages[context.guild.id] and self.bot.chat_messages[context.guild.id][0]["role"] == "system":
+                    self.bot.chat_messages[context.guild.id].pop(0)
+            await context.send("Chat init message has been reset")
 
 async def setup(bot):
     await bot.add_cog(ChatGPT(bot))
