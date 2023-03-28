@@ -19,6 +19,11 @@ class Roles(Enum):
     user = "user"
     assistant = "assistant"
 
+class Warnings(Enum):
+    low = ""
+    medium = "\n:warning:You are nearing the size limit for chatGPT's chat history:warning:"
+    high = ":exclamation:You have reached the size limit for chatGPT's chat history. Use the `/resetchat` command to continue using chatGPT:exclamation:"
+
 def num_tokens_from_messages(messages, model):
     """Returns the number of tokens used by a list of messages."""
     try:
@@ -59,26 +64,27 @@ class ChatGPT(commands.Cog, name="chatgpt"):
         self.bot.messages.append({"role": role.value, "content": prompt})
         messages = self.bot.messages
         token_cost = num_tokens_from_messages(messages, model)
+        if 325 <= 4096-token_cost:
+            warning = Warnings.low
+        elif 4096-token_cost >= 5:
+            warning = Warnings.medium
+        else:
+            warning = Warnings.high
 
         await context.defer()
         try:
-            response = openai.ChatCompletion.create(
-                model=model,
-                messages=messages,
-                temperature=temp,
-                frequency_penalty=presPen,
-                presence_penalty=freqPen,
-                max_tokens=325 if 325 <= 4096-token_cost else token_cost
-            )
-            if 325 <= 4096-token_cost:
-                await context.send(f"{prompt}\n{response['choices'][0]['message']['content']}"[:2000])
-            elif 4096-token_cost <= 5:
-                await context.send(f"{prompt}\n{response['choices'][0]['message']['content']}\n \
-                                   You have reached the limit for chatGPT's chat history. Use the \
-                                   `/resetchat` command to continue using chatGPT."[:2000])
+            if warning == Warnings.high:
+                await context.send(warning.value)
             else:
-                await context.send(f"{prompt}\n{response['choices'][0]['message']['content']}\n \
-                                   You are nearing the limit for chatGPT's chat history."[:2000])
+                response = openai.ChatCompletion.create(
+                    model=model,
+                    messages=messages,
+                    temperature=temp,
+                    frequency_penalty=presPen,
+                    presence_penalty=freqPen,
+                    max_tokens=325 if 325 <= 4096-token_cost else token_cost
+                )
+                await context.send(f"{prompt}\n{response['choices'][0]['message']['content']}{warning.value}"[:2000])
         except Exception as error:
             print(f"Failed to generate valid response for prompt: {prompt}\nError: {error}")
             await context.send(
