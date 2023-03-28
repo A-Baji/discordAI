@@ -5,9 +5,10 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 ## [2.0.0] - TBD
 
 ### Added
+- A changelog
 - An openAI image generation command
 - The gpt3.5 model to the openai command and made it the default
-- A changelog
+- A chatGPT command with chat history functionality
 
 ### Changed
 
