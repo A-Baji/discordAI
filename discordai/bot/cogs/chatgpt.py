@@ -51,17 +51,17 @@ class ChatGPT(commands.Cog, name="chatgpt"):
         frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2 Max=2 Default=0")
     async def chatgpt(self, context: Context, prompt: str = "", role: Roles = Roles.user, temp: float = 1.0,
                      presence_penalty: float = 0.0, frequency_penalty: float = 0.0):
+        openai.api_key = self.bot.config["openai_key"]
         model = "gpt-3.5-turbo"
         temp = min(max(temp, 0), 1)
         presPen = min(max(presence_penalty, -2), 2)
         freqPen = min(max(frequency_penalty, -2), 2)
-        self.bot.messages.append({"role": role, "content": prompt})
+        self.bot.messages.append({"role": role.value, "content": prompt})
         messages = self.bot.messages
         token_cost = num_tokens_from_messages(messages, model)
 
         await context.defer()
         try:
-            openai.api_key = self.bot.config["openai_key"]
             response = openai.ChatCompletion.create(
                 model=model,
                 messages=messages,
@@ -75,7 +75,7 @@ class ChatGPT(commands.Cog, name="chatgpt"):
             elif 4096-token_cost <= 5:
                 await context.send(f"{prompt}\n{response['choices'][0]['message']['content']}\n \
                                    You have reached the limit for chatGPT's chat history. Use the \
-                                   `/resetChat` command to continue using chatGPT."[:2000])
+                                   `/resetchat` command to continue using chatGPT."[:2000])
             else:
                 await context.send(f"{prompt}\n{response['choices'][0]['message']['content']}\n \
                                    You are nearing the limit for chatGPT's chat history."[:2000])
@@ -86,10 +86,10 @@ class ChatGPT(commands.Cog, name="chatgpt"):
             )
 
     @commands.hybrid_command(
-        name="resetChat",
+        name="resetchat",
         description="Resets the chat history for chatGPT completions",
     )
-    async def resetChat(self, context):
+    async def resetchat(self, context):
         self.bot.messages = []
         await context.send("Chat history has been reset")
 
