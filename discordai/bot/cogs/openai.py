@@ -36,21 +36,21 @@ class OpenAI(commands.Cog, name="openai"):
         frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2 Max=2 Default=0")
     async def openai(self, context: Context, prompt: str = "", model: Models = Models.chatgpt, temp: float = 1.0,
                      presence_penalty: float = 0.0, frequency_penalty: float = 0.0):
+        openai.api_key = self.bot.config["openai_key"]
         temp = min(max(temp, 0), 1)
         presPen = min(max(presence_penalty, -2), 2)
         freqPen = min(max(frequency_penalty, -2), 2)
 
         await context.defer()
         try:
-            openai.api_key = self.bot.config["openai_key"]
             if model.value == 'gpt-3.5-turbo':
                 response = openai.ChatCompletion.create(
-                model=model.value,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=temp,
-                frequency_penalty=presPen,
-                presence_penalty=freqPen,
-                max_tokens=325
+                    model=model.value,
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=temp,
+                    frequency_penalty=presPen,
+                    presence_penalty=freqPen,
+                    max_tokens=325
                 )
                 await context.send(f"{prompt}\n{response['choices'][0]['message']['content']}"[:2000])
             else:
