@@ -127,12 +127,13 @@ def start_bot(config, sync=False):
         """
         if getattr(sys, 'frozen', False):
             # The code is being run as a frozen executable
-            data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
-            cogs_path = data_dir / "discordai" / "bot" / "cogs"
-            if not os.path.exists(cogs_path):
-                data_dir = pathlib.Path(sys._MEIPASS)
-                og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-                shutil.copytree(og_cogs_path, cogs_path)
+            cogs_path = pathlib.Path(appdirs.user_data_dir(appname="discordai")) / "discordai" / "bot" / "cogs"
+            data_dir = pathlib.Path(sys._MEIPASS)
+            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
+            os.makedirs(cogs_path, exist_ok=True)
+            for file in og_cogs_path.glob("*"):
+                dest_file = cogs_path / file.name
+                shutil.copy2(file, dest_file, copy_on_overwrite=True)
             for file in os.listdir(cogs_path):
                 if file.endswith(".py"):
                     extension = file[:-3]
