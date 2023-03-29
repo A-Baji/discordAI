@@ -133,7 +133,7 @@ def start_bot(config, sync=False):
             os.makedirs(cogs_path, exist_ok=True)
             for file in og_cogs_path.glob("*"):
                 dest_file = cogs_path / file.name
-                shutil.copy2(file, dest_file, copy_on_overwrite=True)
+                shutil.copy2(file, dest_file)
             for file in os.listdir(cogs_path):
                 if file.endswith(".py"):
                     extension = file[:-3]
