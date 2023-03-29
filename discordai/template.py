@@ -48,7 +48,7 @@ class {class_name}(commands.Cog, name="{command_name}"):
         max_tokens="The max number of tokens to generate. Each token costs credits: Default={max_tokens_default}",
         stop="Whether to stop after the first sentence: Default={stop_default}",
         bold="Whether to bolden the original prompt: Default={bold_default}")
-    async def customai(self, context: Context, prompt: str = "", temp: float = {temp_default},
+    async def {command_name}(self, context: Context, prompt: str = "", temp: float = {temp_default},
                        presence_penalty: float = {pres_default}, frequency_penalty: float = {freq_default}, max_tokens: int = {max_tokens_default},
                        stop: bool = {stop_default}, bold: bool = {bold_default}):
         temp = min(max(temp, 0), 1)
