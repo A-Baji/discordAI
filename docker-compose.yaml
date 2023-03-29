@@ -8,11 +8,14 @@ services:
     environment:
       - DISCORD_TOKEN
       - OPENAI_KEY
+      - PYTHONUNBUFFERED=1
     env_file: ./.env
     volumes:
       - ./discordai:/usr/local/lib/python3.11/site-packages/discordai
+      - ./init.sh:/main/init.sh
     command:
       - sh
       - -c
       - |
-        tail -f /dev/null
+        ./init.sh
+        discordai bot start
