@@ -10,6 +10,26 @@ from discord.ext import commands
 from discord.ext.commands import Context
 
 import openai
+import re
+
+def replace_emoji(emoji_name: str, emoji_map):
+    if emoji_name in emoji_map:
+        if emoji_map[emoji_name][1]:
+            return f"<a:{{emoji_name}}:{{emoji_map[emoji_name][0]}}>"
+        else:
+            return f"<:{{emoji_name}}:{{emoji_map[emoji_name][0]}}>"
+    elif emoji_name.upper() in emoji_map:
+        if emoji_map[emoji_name.upper()][1]:
+            return f"<a:{{emoji_name.upper()}}:{{emoji_map[emoji_name.upper()][0]}}>"
+        else:
+            return f"<:{{emoji_name.upper()}}:{{emoji_map[emoji_name.upper()][0]}}>"
+    elif emoji_name.lower() in emoji_map:
+        if emoji_map[emoji_name.lower()][1]:
+            return f"<a:{{emoji_name.lower()}}:{{emoji_map[emoji_name.lower()][0]}}>"
+        else:
+            return f"<:{{emoji_name.lower()}}:{{emoji_map[emoji_name.lower()][0]}}>"
+    else:
+        return f":{{emoji_name}}:"
 
 
 class {class_name}(commands.Cog, name="{command_name}"):
@@ -48,7 +68,9 @@ class {class_name}(commands.Cog, name="{command_name}"):
                 echo=False,
                 stop='.' if stop else None,
             )
-            await context.send(f"{{'**' if bold and prompt else ''}}{{prompt}}{{'**' if bold and prompt else ''}}{{response[\'choices\'][0][\'text\'][:2000]}}")
+            emojied_response = re.sub(r":(\w+):", lambda match: replace_emoji(
+                match.group(1), context.bot.emoji_map), f"{{'**' if bold and prompt else ''}}{{prompt}}{{'**' if bold and prompt else ''}}{{response[\'choices\'][0][\'text\']}}")
+            await context.send(emojied_response[:2000])
         except Exception as error:
             print({error})
             await context.send(

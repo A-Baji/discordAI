@@ -30,6 +30,7 @@ def start_bot(config, sync=False):
     bot.config = config
     bot.chat_messages = {}
     bot.chat_init = {}
+    bot.emoji_map = {}
 
     @bot.event
     async def on_ready() -> None:
@@ -44,6 +45,10 @@ def start_bot(config, sync=False):
         if sync:
             print("Syncing commands globally...")
             await bot.tree.sync()
+        for guild in bot.guilds:
+            for emoji in guild.emojis:
+                if emoji.name not in bot.emoji_map:
+                    bot.emoji_map[emoji.name] = [emoji.id, emoji.animated]
         print("-------------------")
 
     @bot.event
