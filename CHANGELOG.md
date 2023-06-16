@@ -2,6 +2,13 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [2.0.1] - 06-15-2023
+
+### Changed
+
+- updated documentation
+- updated modelizer to version [2.0.0](https://github.com/A-Baji/discordAI-modelizer/releases/tag/2.0.1)
+
 ## [2.0.0] - 06-15-2023
 
 ### Added
@@ -75,6 +82,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 - modified readme
 
+[2.0.1]: https://github.com/A-Baji/discordAI/compare/1.3.2...2.0.1
 [2.0.0]: https://github.com/A-Baji/discordAI/compare/1.3.2...2.0.0
 [1.3.2]: https://github.com/A-Baji/discordAI/compare/1.3.1...1.3.2
 [1.3.1]: https://github.com/A-Baji/discordAI/compare/1.3.0...1.3.1

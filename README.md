@@ -1,5 +1,5 @@
 # DiscordAI
-DiscordAI is CLI package that you can use to run your discord bot. You can create customized openAI models based on a discord channel and user, and then add new slash commands to your bot to use these custom models to create openAI completions.
+DiscordAI is CLI package that you can use to run your discord bot. You can create customized openAI models based on a discord channel and user, and then add new slash commands for your discord bot to use these custom models in openAI completions.
 
 DiscordAI is a parent module of [DiscordAI Modelizer](https://github.com/A-Baji/discordAI-modelizer).
 
@@ -26,17 +26,19 @@ The model creation process can be broken down into three steps: downloading the 
 
 Pick a channel and user whose chat logs you want to use for creating your custom model and run:
 
-`discordai model create -c <channel_id> -u "<username#id>" --dirty`
+`discordai model create -c <channel_id> -u "<username>" --dirty`
 
-You can follow [this guide](https://turbofuture.com/internet/Discord-Channel-ID) to learn how to find a channel's ID. Make sure that you include the full username with the #id, and wrap it in quotes if it contains spaces. The `--dirty` flag prevents the outputted dataset files from being deleted. Downloaded chat logs get saved and reused, but you can set the `--redownload` flag if you want to update the logs.
+You can follow [this guide](https://turbofuture.com/internet/Discord-Channel-ID) to learn how to find a channel's ID. Make sure that you include the full username with the , and wrap it in quotes if it contains spaces. The `--dirty` flag prevents the outputted dataset files from being deleted. Downloaded chat logs get saved and reused, but you can set the `--redownload` flag if you want to update the logs.
 
-You may have noticed the lack of a model customization process occurring after running that command. This is because no base model was selected, but before you specify a base model, you should analyze the generated dataset located in the directory mentioned in the logs. Chat messages are parsed into a dataset by grouping individual messages sent within a certain timeframe into "thoughts", where each thought is a completion in the dataset. The default for this timeframe is 10 seconds. The length of each thought must also be within the minimum and max thought length. The defaults for these are 4 words and `None`, or optional. If your dataset looks a bit off, try different settings using the `--ttime`, `--tmin`, and `--ttmax` options: 
+You may have noticed that the model creation step was skipped. This is because no base model was selected, but before you specify a base model, you should analyze the generated dataset located in the directory mentioned in the logs. Chat messages are parsed into a dataset by grouping individual messages sent within a certain timeframe into "thoughts", where each thought is a completion in the dataset. The default for this timeframe is 10 seconds. The length of each thought must also be within the minimum and max thought length. The defaults for these are 4 words and `None`, or optional. If your dataset looks a bit off, try different settings using the `--ttime`, `--tmin`, and `--ttmax` options: 
 
-`discordai model create -c <channel_id> -u "<username#id>" --ttime <timeframe> --tmax <thought_max> --tmin <thought_min> --dirty`
+`discordai model create -c <channel_id> -u "<username>" --ttime <timeframe> --tmax <thought_max> --tmin <thought_min> --dirty`
 
 After you've found good thought settings, you will want to manage your dataset's size. The larger your dataset, the more openAI credits it will cost to create a custom model. By default, the max dataset size is set to 1000. If your dataset exceeds this limit, it will be reduced using either a "first", "last", "middle", or "even" reduction method. The "first" method will select the first n messages, "last" will select the last n, "middle" will select the middle n, and "even" will select an even distribution of n messages. The default reduction method is even. You can set the max dataset size and reduction mode using the `-m` and `-r` options: 
 
-`discordai model create -c <channel_id> -u "<username#id>" --ttime <timeframe> --tmax <thought_max> --tmin <thought_min> -m <max_size> -r <reduction_mode> --dirty`
+`discordai model create -c <channel_id> -u "<username>" --ttime <timeframe> --tmax <thought_max> --tmin <thought_min> -m <max_size> -r <reduction_mode> --dirty`
+
+If you are still not satisfied with the resulting dataset, you can manually alter it and then use the `--use_existing` flag. This will skip the dataset processing step and instead use the pre-existing dataset.
 
 If you are planning on creating multiple models, you may want to get your hands on multiple openAI API keys in order to maximize the free credit usage. You can assign specific api keys to custom models using the `-o` option. Otherwise, the key provided in your config will be used.
 
@@ -44,7 +46,7 @@ Now that you have fine tuned your dataset, you can finally begin the customizati
 
 Your final command should look something like this: 
 
-`discordai model create -c <channel_id> -u "<username#id>" --ttime <timeframe> --tmax <thought_max> --tmin <thought_min> -m <max_size> -r <reduction_mode> -b <base_model>`
+`discordai model create -c <channel_id> -u "<username>" --ttime <timeframe> --tmax <thought_max> --tmin <thought_min> -m <max_size> -r <reduction_mode> -b <base_model>`
 
 If you find the training step to cost too many credits with your current options, you can cancel it with `discordai job cancel -j <job_id>`, and then either lower your max dataset size, or choose a different discord channel and/or user. You can get a list of all your jobs with `discordai job list --simple`.
 ### Test the new model
@@ -62,7 +64,7 @@ The options after `-n` and `-i` are to set the *defaults* for the slash command.
 
 Slash commands can be updated at any time by calling `discordai bot commands new` with the same <command_name> but different default values. You can also delete slash commands with `discordai bot commands delete -n <command_name>`.
 
-After creating a new slash command, remember to sync your slash commands with discord's servers by running `discordai bot start --sync`, or by using `@bot_name sync global` in discord.
+After creating a new slash command, remember to sync your slash commands with discord's servers by running `discordai bot start --sync`, or by using `@<your_bot> sync global` in discord.
 
 ### Questions
 If you have any questions, feel free to make a new post in [discussions](https://github.com/A-Baji/discordAI/discussions/categories/q-a). If you encounter any issues while using discordAI, make sure to create a new [issue](https://github.com/A-Baji/discordAI/issues).
@@ -78,7 +80,7 @@ Manage your discord bot's slash commands
   * Create a new slash command for your bot that will use a customized model for completions
 * `discordai bot commands delete`
   * Delete a slash command from your bot
-#### `@bot_name sync|unsyc guild|global`
+#### `@<your_bot> sync|unsyc guild|global`
 These are special non-CLI commands that must be run *in discord*, in a channel that your bot is a member of. They are used to update or remove your bot's slash commands from discord's servers.
 ### Model
 Commands related to your openAI models
@@ -109,3 +111,5 @@ Get or set your openaAI API key
 This application allows users to download the chat history of any channel for which they have permission to invite a bot, and then use those logs to create an openai model based on a user's chat messages. It is important to note that this application should only be used with the consent of all members of the channel. Using this application for malicious purposes, such as impersonation, or without the consent of all members is strictly prohibited.
 
 By using this application, you agree to use it responsibly. The developers of this application are not responsible for any improper use of the application or any consequences resulting from such use. We strongly discourage using this application for any unethical purposes.
+
+This application is not affiliated with or endorsed by Discord, Inc. The use of the term "Discord" in our product name is solely for descriptive purposes to indicate compatibility with the Discord platform.

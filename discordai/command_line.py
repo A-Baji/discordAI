@@ -166,7 +166,7 @@ def discordai():
         "-u", "--user",
         type=str,
         dest='user',
-        help="The username#ID of the discord user you want to use",
+        help="The username of the discord user you want to use",
     )
     model_create_optional_named = model_create.add_argument_group("optional named arguments")
     model_create_optional_named.add_argument(
