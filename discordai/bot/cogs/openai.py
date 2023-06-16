@@ -29,12 +29,12 @@ class OpenAI(commands.Cog, name="openai"):
         description="Generate an openAI completion",
     )
     @app_commands.describe(
-        prompt="The prompt to pass to openAI: Default=\"\"",
+        prompt="The prompt to pass to openAI",
         model=" chatgpt | davinci | curie | babbage | ada:  Default=chatgpt",
         temp="What sampling temperature to use. Higher values means more risks: Min=0 Max=1 Default=1",
         presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2 Max=2 Default=0",
         frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2 Max=2 Default=0")
-    async def openai(self, context: Context, prompt: str = "", model: Models = Models.chatgpt, temp: float = 1.0,
+    async def openai(self, context: Context, prompt: str, model: Models = Models.chatgpt, temp: float = 1.0,
                      presence_penalty: float = 0.0, frequency_penalty: float = 0.0):
         openai.api_key = self.bot.config["openai_key"]
         temp = min(max(temp, 0), 1)
@@ -61,7 +61,7 @@ class OpenAI(commands.Cog, name="openai"):
                     frequency_penalty=presPen,
                     presence_penalty=freqPen,
                     max_tokens=325,
-                    echo=True if prompt else False
+                    echo=True
                 )
                 await context.send(response["choices"][0]["text"][:2000])
         except Exception as error:

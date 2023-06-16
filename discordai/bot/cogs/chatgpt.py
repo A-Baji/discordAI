@@ -49,12 +49,12 @@ class ChatGPT(commands.Cog, name="chatgpt"):
         description="Generate an chatGPT completion",
     )
     @app_commands.describe(
-        prompt="The prompt to pass to chatGPT: Default=\"\"",
+        prompt="The prompt to pass to chatGPT",
         role=" system | user | asssistant: Default=user",
         temp="What sampling temperature to use. Higher values means more risks: Min=0 Max=1 Default=1",
         presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2 Max=2 Default=0",
         frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2 Max=2 Default=0")
-    async def chatgpt(self, context: Context, prompt: str = "", role: Roles = Roles.user, temp: float = 1.0,
+    async def chatgpt(self, context: Context, prompt: str, role: Roles = Roles.user, temp: float = 1.0,
                      presence_penalty: float = 0.0, frequency_penalty: float = 0.0):
         openai.api_key = self.bot.config["openai_key"]
         model = "gpt-3.5-turbo"
@@ -63,7 +63,7 @@ class ChatGPT(commands.Cog, name="chatgpt"):
         freqPen = min(max(frequency_penalty, -2), 2)
 
         if context.guild.id not in self.bot.chat_messages:
-            self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": self.bot.chat_init[context.guild.id]}] if context.guild.id in self.bot.chat_init and self.bot.chat_init[context.guild.id] else []
+            self.bot.chat_messages[context.guild.id] = []
         self.bot.chat_messages[context.guild.id].append({"role": role.value, "content": prompt})
         messages = self.bot.chat_messages[context.guild.id]
 
@@ -88,7 +88,7 @@ class ChatGPT(commands.Cog, name="chatgpt"):
                     presence_penalty=freqPen,
                     max_tokens=325 if 325 <= 4096-token_cost else token_cost
                 )
-                await context.send(f"{prompt}\n{response['choices'][0]['message']['content']}{warning.value}"[:2000])
+                await context.send(f"{prompt}\n\n{response['choices'][0]['message']['content']}{warning.value}"[:2000])
                 self.bot.chat_messages[context.guild.id].append(response['choices'][0]['message'])
         except Exception as error:
             print(f"Failed to generate valid response for prompt: {prompt}\nError: {error}")
@@ -97,32 +97,27 @@ class ChatGPT(commands.Cog, name="chatgpt"):
             )
 
     @commands.hybrid_command(
-        name="resetchat",
+        name="chatreset",
         description="Resets the chat history for chatGPT completions",
     )
-    async def resetchat(self, context):
-        self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": self.bot.chat_init[context.guild.id]}] if context.guild.id in self.bot.chat_init and self.bot.chat_init[context.guild.id] else []
+    async def chatreset(self, context):
+        self.bot.chat_messages[context.guild.id] = []
         await context.send("Chat history has been reset")
 
     @commands.hybrid_command(
-        name="setchatinit",
-        description="Set the initialization message, a guide for the AI on how to respond to future chat messages",
+        name="chatinit",
+        description="Initialize chatGPT with an instructional message",
     )
-    @app_commands.describe(message="The init message for chatGPT completions. Omit to reset")
-    async def setchatinit(self, context, message: str = ""):
-        self.bot.chat_init[context.guild.id] = message
-        if message:
-            if context.guild.id in self.bot.chat_messages:
-                if self.bot.chat_messages[context.guild.id] and self.bot.chat_messages[context.guild.id][0]["role"] == "system":
-                    self.bot.chat_messages[context.guild.id][0] = {"role": "system", "content": self.bot.chat_init[context.guild.id]}
-                else:
-                    self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": self.bot.chat_init[context.guild.id]}] + self.bot.chat_messages[context.guild.id]
-            await context.send("Chat init message has been set")
+    @app_commands.describe(message="The initialization message")
+    async def chatinit(self, context, message: str):
+        if context.guild.id in self.bot.chat_messages:
+            if self.bot.chat_messages[context.guild.id] and self.bot.chat_messages[context.guild.id][0]["role"] == "system":
+                self.bot.chat_messages[context.guild.id][0] = {"role": "system", "content": message}
+            else:
+                self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": message}] + self.bot.chat_messages[context.guild.id]
         else:
-            if context.guild.id in self.bot.chat_messages:
-                if self.bot.chat_messages[context.guild.id] and self.bot.chat_messages[context.guild.id][0]["role"] == "system":
-                    self.bot.chat_messages[context.guild.id].pop(0)
-            await context.send("Chat init message has been reset")
+            self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": message}]
+        await context.send(f"ChatGPT has been initialized with \"{message}\"")
 
 async def setup(bot):
     await bot.add_cog(ChatGPT(bot))
