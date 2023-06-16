@@ -81,4 +81,4 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 [1.2.1]: https://github.com/A-Baji/discordAI/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/A-Baji/discordAI/compare/1.1.1...1.2.0
 [1.1.1]: https://github.com/A-Baji/discordAI/compare/1.1.0...1.1.1
-[1.1.0]: https://github.com/A-Baji/discordAI/releases/tag/1.1.0
+[1.1.0]: https://github.com/A-Baji/discordAI/compare/1.0.0...1.1.0
