@@ -2,37 +2,37 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
-## [2.0.0] - TBD
+## [2.0.0] - 06-15-2023
 
 ### Added
-- A changelog
-- An openAI image generation command
-- The gpt3.5 model to the openai command and made it the default
-- A chatGPT command with chat history functionality
-- Custom emoji support for custom models.
+
+- a changelog
+- an openAI image generation command
+- the gpt3.5 model to the openai command and made it the default
+- a chatGPT command with chat history functionality
+- custom emoji support for custom models.
 
 ### Fixed
-- Upgrading the packaged executable version now properly applies any new features to existing, non-custom cogs
+
+- upgrading the packaged executable version now properly applies any new features to existing, non-custom cogs
+- bug where two stars would appear for blank prompts for custom model completions
 
 ### Changed
 
-- Made prompt bolding for custom model completions a discord command parameter
-
-### Fixed
-
-- Bug where two stars would appear for blank prompts for custom model completions
+- made prompt bolding for custom model completions a discord command parameter
+- updated modelizer to version [2.0.0](https://github.com/A-Baji/discordAI-modelizer/releases/tag/2.0.0)
 
 ## [1.3.2] - 02-22-2023
 
 ### Changed
 
-- Update modelizer to version [1.2.2](https://github.com/A-Baji/discordAI-modelizer/compare/1.2.1...1.2.2)
+- updated modelizer to version [1.2.2](https://github.com/A-Baji/discordAI-modelizer/releases/tag/1.2.2)
 
 ## [1.3.1] - 02-19-2023
 
 ### Changed
 
-- Update modelizer to version [1.2.1](https://github.com/A-Baji/discordAI-modelizer/compare/1.2.0...1.2.1)
+- updated modelizer to version [1.2.1](https://github.com/A-Baji/discordAI-modelizer/releases/tag/1.2.1)
 
 ## [1.3.0] - 02-17-2023
 
@@ -45,35 +45,35 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 ### Changed
 
-- Update modelizer to version [1.2.0](https://github.com/A-Baji/discordAI-modelizer/compare/1.1.0...1.2.0)
+- updated modelizer to version [1.2.0](https://github.com/A-Baji/discordAI-modelizer/releases/tag/1.2.0)
 
 ## [1.2.1] - 02-12-2023
 
 ### Added
 
-- Option to provide a different openai key to the customai command
+- option to provide a different openai key to the customai command
 
 ## [1.2.0] - 02-11-2023
 
 ### Changed
 
-- Update modelizer to version [1.1.0](https://github.com/A-Baji/discordAI-modelizer/compare/1.0.1...1.1.0)
+- updated modelizer to version [1.1.0](https://github.com/A-Baji/discordAI-modelizer/releases/tag/1.1.0)
 
 ## [1.1.1] - 02-11-2023
 
 ### Added
 
-- Pin modelizer to version [1.1.0](https://github.com/A-Baji/discordAI-modelizer/compare/1.0.0...1.0.1)
+- pinned modelizer to version [1.1.0](https://github.com/A-Baji/discordAI-modelizer/releases/tag/1.0.1)
 
 ### Changed
 
-- Switched from using `os.path` to `pathlib`
+- switched from using `os.path` to `pathlib`
 
 ## [1.1.0] - 01-29-2023
 
 ### Changed
 
-- Modified readme
+- modified readme
 
 [1.3.2]: https://github.com/A-Baji/discordAI/compare/1.3.1...1.3.2
 [1.3.1]: https://github.com/A-Baji/discordAI/compare/1.3.0...1.3.1
