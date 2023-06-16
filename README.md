@@ -64,7 +64,7 @@ The options after `-n` and `-i` are to set the *defaults* for the slash command.
 
 Slash commands can be updated at any time by calling `discordai bot commands new` with the same <command_name> but different default values. You can also delete slash commands with `discordai bot commands delete -n <command_name>`.
 
-After creating a new slash command, remember to sync your slash commands with discord's servers by running `discordai bot start --sync`, or by using `@bot_name sync global` in discord.
+After creating a new slash command, remember to sync your slash commands with discord's servers by running `discordai bot start --sync`, or by using `@<your_bot> sync global` in discord.
 
 ### Questions
 If you have any questions, feel free to make a new post in [discussions](https://github.com/A-Baji/discordAI/discussions/categories/q-a). If you encounter any issues while using discordAI, make sure to create a new [issue](https://github.com/A-Baji/discordAI/issues).
@@ -80,7 +80,7 @@ Manage your discord bot's slash commands
   * Create a new slash command for your bot that will use a customized model for completions
 * `discordai bot commands delete`
   * Delete a slash command from your bot
-#### `@bot_name sync|unsyc guild|global`
+#### `@<your_bot> sync|unsyc guild|global`
 These are special non-CLI commands that must be run *in discord*, in a channel that your bot is a member of. They are used to update or remove your bot's slash commands from discord's servers.
 ### Model
 Commands related to your openAI models
