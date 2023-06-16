@@ -75,6 +75,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 - modified readme
 
+[2.0.0]: https://github.com/A-Baji/discordAI/compare/1.3.2...2.0.0
 [1.3.2]: https://github.com/A-Baji/discordAI/compare/1.3.1...1.3.2
 [1.3.1]: https://github.com/A-Baji/discordAI/compare/1.3.0...1.3.1
 [1.3.0]: https://github.com/A-Baji/discordAI/compare/1.2.1...1.3.0
