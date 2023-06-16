@@ -111,3 +111,5 @@ Get or set your openaAI API key
 This application allows users to download the chat history of any channel for which they have permission to invite a bot, and then use those logs to create an openai model based on a user's chat messages. It is important to note that this application should only be used with the consent of all members of the channel. Using this application for malicious purposes, such as impersonation, or without the consent of all members is strictly prohibited.
 
 By using this application, you agree to use it responsibly. The developers of this application are not responsible for any improper use of the application or any consequences resulting from such use. We strongly discourage using this application for any unethical purposes.
+
+This application is not affiliated with or endorsed by Discord, Inc. The use of the term "Discord" in our product name is solely for descriptive purposes to indicate compatibility with the Discord platform.
