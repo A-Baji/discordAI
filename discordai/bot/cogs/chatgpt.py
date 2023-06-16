@@ -49,12 +49,12 @@ class ChatGPT(commands.Cog, name="chatgpt"):
         description="Generate an chatGPT completion",
     )
     @app_commands.describe(
-        prompt="The prompt to pass to chatGPT: Default=\"\"",
+        prompt="The prompt to pass to chatGPT",
         role=" system | user | asssistant: Default=user",
         temp="What sampling temperature to use. Higher values means more risks: Min=0 Max=1 Default=1",
         presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2 Max=2 Default=0",
         frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2 Max=2 Default=0")
-    async def chatgpt(self, context: Context, prompt: str = "", role: Roles = Roles.user, temp: float = 1.0,
+    async def chatgpt(self, context: Context, prompt: str, role: Roles = Roles.user, temp: float = 1.0,
                      presence_penalty: float = 0.0, frequency_penalty: float = 0.0):
         openai.api_key = self.bot.config["openai_key"]
         model = "gpt-3.5-turbo"
@@ -88,7 +88,7 @@ class ChatGPT(commands.Cog, name="chatgpt"):
                     presence_penalty=freqPen,
                     max_tokens=325 if 325 <= 4096-token_cost else token_cost
                 )
-                await context.send(f"{prompt}\n{response['choices'][0]['message']['content']}{warning.value}"[:2000])
+                await context.send(f"{prompt}\n\n{response['choices'][0]['message']['content']}{warning.value}"[:2000])
                 self.bot.chat_messages[context.guild.id].append(response['choices'][0]['message'])
         except Exception as error:
             print(f"Failed to generate valid response for prompt: {prompt}\nError: {error}")
