@@ -29,7 +29,6 @@ bot = Bot(command_prefix=commands.when_mentioned_or(
 def start_bot(config, sync=False):
     bot.config = config
     bot.chat_messages = {}
-    bot.chat_init = {}
     bot.emoji_map = {}
 
     @bot.event

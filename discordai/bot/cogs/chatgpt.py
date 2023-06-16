@@ -63,7 +63,7 @@ class ChatGPT(commands.Cog, name="chatgpt"):
         freqPen = min(max(frequency_penalty, -2), 2)
 
         if context.guild.id not in self.bot.chat_messages:
-            self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": self.bot.chat_init[context.guild.id]}] if context.guild.id in self.bot.chat_init and self.bot.chat_init[context.guild.id] else []
+            self.bot.chat_messages[context.guild.id] = []
         self.bot.chat_messages[context.guild.id].append({"role": role.value, "content": prompt})
         messages = self.bot.chat_messages[context.guild.id]
 
@@ -97,32 +97,27 @@ class ChatGPT(commands.Cog, name="chatgpt"):
             )
 
     @commands.hybrid_command(
-        name="resetchat",
+        name="chatreset",
         description="Resets the chat history for chatGPT completions",
     )
-    async def resetchat(self, context):
-        self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": self.bot.chat_init[context.guild.id]}] if context.guild.id in self.bot.chat_init and self.bot.chat_init[context.guild.id] else []
+    async def chatreset(self, context):
+        self.bot.chat_messages[context.guild.id] = []
         await context.send("Chat history has been reset")
 
     @commands.hybrid_command(
-        name="setchatinit",
-        description="Set the initialization message, a guide for the AI on how to respond to future chat messages",
+        name="chatinit",
+        description="Initialize chatGPT with an instructional message",
     )
-    @app_commands.describe(message="The init message for chatGPT completions. Omit to reset")
-    async def setchatinit(self, context, message: str = ""):
-        self.bot.chat_init[context.guild.id] = message
-        if message:
-            if context.guild.id in self.bot.chat_messages:
-                if self.bot.chat_messages[context.guild.id] and self.bot.chat_messages[context.guild.id][0]["role"] == "system":
-                    self.bot.chat_messages[context.guild.id][0] = {"role": "system", "content": self.bot.chat_init[context.guild.id]}
-                else:
-                    self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": self.bot.chat_init[context.guild.id]}] + self.bot.chat_messages[context.guild.id]
-            await context.send("Chat init message has been set")
+    @app_commands.describe(message="The initialization message")
+    async def chatinit(self, context, message: str):
+        if context.guild.id in self.bot.chat_messages:
+            if self.bot.chat_messages[context.guild.id] and self.bot.chat_messages[context.guild.id][0]["role"] == "system":
+                self.bot.chat_messages[context.guild.id][0] = {"role": "system", "content": message}
+            else:
+                self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": message}] + self.bot.chat_messages[context.guild.id]
         else:
-            if context.guild.id in self.bot.chat_messages:
-                if self.bot.chat_messages[context.guild.id] and self.bot.chat_messages[context.guild.id][0]["role"] == "system":
-                    self.bot.chat_messages[context.guild.id].pop(0)
-            await context.send("Chat init message has been reset")
+            self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": message}]
+        await context.send(f"ChatGPT has been initialized with \"{message}\"")
 
 async def setup(bot):
     await bot.add_cog(ChatGPT(bot))
