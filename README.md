@@ -104,7 +104,7 @@ Cancel an openAI customization job
 View and modify your config
 #### `discordai config bot-token`
 Get or set your discord bot token
-#### `discordai job openai-key`
+#### `discordai config openai-key`
 Get or set your openaAI API key
 
 ## Disclaimer
