@@ -3,6 +3,15 @@ DiscordAI is CLI package that you can use to run your discord bot. You can creat
 
 DiscordAI is a parent module of [DiscordAI Modelizer](https://github.com/A-Baji/discordAI-modelizer).
 
+## Development
+### 3.0 To Do List
+- [] Make `discordai-modelizer` a submodule
+- [] Localize the log downloader
+- [] Integrate Gemini
+- [] Integrate Meta AI
+- [] Rewrite documentation
+- [] Improve model training method?
+
 ## Installation
 ### Executable
 Download the CLI executable for your OS from the [latest release](https://github.com/A-Baji/discordAI/releases/latest). Unfortunately, the Mac version of the executable is not available due to stability issues.
