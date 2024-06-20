@@ -5,7 +5,7 @@ DiscordAI is a parent module of [DiscordAI Modelizer](https://github.com/A-Baji/
 
 ## Development
 ### 3.0 To Do List
-- [ ] Make `discordai-modelizer` a submodule
+- [x] Make `discordai-modelizer` a submodule
 - [ ] Localize the log downloader
 - [ ] Integrate Gemini
 - [ ] Integrate Meta AI
