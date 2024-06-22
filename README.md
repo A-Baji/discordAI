@@ -6,9 +6,12 @@ DiscordAI is a parent module of [DiscordAI Modelizer](https://github.com/A-Baji/
 ## Development
 ### 3.0 To Do List
 - [x] Make `discordai-modelizer` a submodule
-- [ ] Localize the log downloader
+- [x] ~~Localize the log downloader~~
+- [ ] Update DiscordChatExporter
+- [x] Update OpenAI
 - [ ] Integrate Gemini
 - [ ] Integrate Meta AI
+- [ ] Add unit tests
 - [ ] Rewrite documentation
 - [ ] Improve model training method?
 
@@ -103,8 +106,6 @@ Delete an openAI customized model
 Commands related to your openAI jobs
 #### `discordai job list`
 List your openAI customization jobs
-#### `discordai job follow`
-Follow an openAI customization job
 #### `discordai job status`
 Get an openAI customization job's status
 #### `discordai job cancel`
