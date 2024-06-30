@@ -24,10 +24,10 @@ def get():
             print(f"Set OPENAI_API_KEY value to {openai_key}")
 
         config = dict(
-            token=token or input("\nEnter your discord bot token: "),
-            openai_key=openai_key or input("\nEnter your openAI key: "),
+            DISCORD_BOT_TOKEN=token or input("\nEnter your discord bot token: "),
+            OPENAI_API_KEY=openai_key or input("\nEnter your openAI key: "),
         )
-        save(json.dumps(config))
+        save(config)
         print(f"Your config has been saved to {config_dir / 'config.json'}")
 
     return config
@@ -36,4 +36,4 @@ def get():
 def save(config):
     os.makedirs(config_dir, exist_ok=True)
     with open(pathlib.Path(config_dir, "config.json"), "w") as f:
-        f.write(config)
+        f.write(json.dumps(config))
