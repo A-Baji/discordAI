@@ -5,12 +5,16 @@ from discordai import template
 from discordai import bot
 from discordai.command_line import subparsers
 from discordai_modelizer.command_line import command_line
+from discordai_modelizer.command_line.subparsers import (
+    set_openai_help_str,
+    set_bot_key_help_str,
+)
 
 
 def set_openai_api_key(key: str, config):
     if not key and not config["OPENAI_API_KEY"]:
         raise ValueError(
-            "Your OpenAI API key must either be passed in as an argument or set in your config",
+            f"Your OpenAI API key must either be passed in as an argument or set {set_openai_help_str(is_parent=True)}",
         )
     else:
         return key or config["OPENAI_API_KEY"]
@@ -19,7 +23,7 @@ def set_openai_api_key(key: str, config):
 def set_bot_token(token: str, config):
     if not token and not config["DISCORD_BOT_TOKEN"]:
         raise ValueError(
-            "Your Discord bot token must either be passed in as an argument or set in your config",
+            f"Your Discord bot token must either be passed in as an argument or set {set_bot_key_help_str(is_parent=True)}",
         )
     else:
         return token or config["DISCORD_BOT_TOKEN"]
