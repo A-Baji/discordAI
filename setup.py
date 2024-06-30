@@ -30,7 +30,7 @@ setuptools.setup(
     ],
     entry_points={
         "console_scripts": [
-            f"{package.__name__}={package.__name__}.command_line:{package.__name__}"
+            f"{package.__name__}={package.__name__}.command_line.command_line:{package.__name__}"
         ],
     },
     include_package_data=True,
