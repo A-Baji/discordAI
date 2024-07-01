@@ -2,4 +2,4 @@ discord.py
 openai
 tiktoken
 appdirs
-discordai_modelizer @ git+https://github.com/A-Baji/discordAI-modelizer.git@2.0.1
+discordai_modelizer @ git+https://github.com/A-Baji/discordAI-modelizer.git@3.0.4
