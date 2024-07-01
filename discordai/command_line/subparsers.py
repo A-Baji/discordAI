@@ -1,7 +1,5 @@
 def setup_bot_start(bot_subcommand):
-    bot_cmd_start = bot_subcommand.add_parser(
-        "start", description="Start your discord bot"
-    )
+    bot_cmd_start = bot_subcommand.add_parser("start", help="Start your discord bot")
     bot_cmd_optional_named = bot_cmd_start.add_argument_group(
         "optional named arguments"
     )
@@ -18,7 +16,7 @@ def setup_bot_start(bot_subcommand):
 def setup_add_bot_command(bot_cmd_commands_subcommand):
     add_cmd = bot_cmd_commands_subcommand.add_parser(
         "add",
-        description="Add a new slash command for your bot to use a customized model",
+        help="Add a new slash command for your bot to use a customized model",
     )
     add_cmd_required_named = add_cmd.add_argument_group("required named arguments")
     add_cmd_optional_named = add_cmd.add_argument_group("optional named arguments")
@@ -101,7 +99,7 @@ def setup_add_bot_command(bot_cmd_commands_subcommand):
 
 def setup_delete_bot_command(bot_cmd_commands_subcommand):
     delete_cmd = bot_cmd_commands_subcommand.add_parser(
-        "delete", description="Delete a slash command from your bot"
+        "delete", help="Delete a slash command from your bot"
     )
     delete_cmd_required_named = delete_cmd.add_argument_group(
         "required named arguments"
@@ -117,37 +115,11 @@ def setup_delete_bot_command(bot_cmd_commands_subcommand):
     )
 
 
-def setup_update_bot_token(config_subcommand):
-    config_bot_token = config_subcommand.add_parser(
-        "bot-token", description="Get or set your discord bot token"
+def setup_update_config(config_subcommand):
+    config_command = config_subcommand.add_parser(
+        "update", help="Update your DiscordAI config"
     )
-    config_bot_token_optional_named = config_bot_token.add_argument_group(
-        "optional named arguments"
+    config_command.add_argument(
+        "key", help="The key to update: `DISCORD_BOT_TOKEN` | `OPENAI_API_KEY`"
     )
-
-    config_bot_token_optional_named.add_argument(
-        "-t",
-        "--set-token",
-        type=str,
-        required=False,
-        dest="new_token",
-        help="A new Discord bot token to update the config with",
-    )
-
-
-def setup_update_openai_key(config_subcommand):
-    config_openai_key = config_subcommand.add_parser(
-        "openai-key", description="Get or set your openaAI API key"
-    )
-    config_openai_key_optional_named = config_openai_key.add_argument_group(
-        "optional named arguments"
-    )
-
-    config_openai_key_optional_named.add_argument(
-        "-k",
-        "--set-key",
-        type=str,
-        required=False,
-        dest="new_key",
-        help="A new OpenAI API key to update the config with",
-    )
+    config_command.add_argument("value", help="The new value for the key")

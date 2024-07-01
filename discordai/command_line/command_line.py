@@ -16,22 +16,19 @@ def discordai():
         parser, is_parent=True
     )
 
-    bot_cmd = command.add_parser(
-        "bot", description="Commands related to your Discord bot"
-    )
-    config_cmd = command.add_parser("config", description="View and modify your config")
+    bot_cmd = command.add_parser("bot", help="Manage your Discord bot")
+    config_cmd = command.add_parser("config", help="View your DiscordAI config")
 
     bot_subcommand = bot_cmd.add_subparsers(dest="subcommand")
     bot_subsubcommand = bot_subcommand.add_parser(
-        "command", description="Manage your Discord bot's slash commands"
+        "command", help="Manage your Discord bot's slash commands"
     ).add_subparsers(dest="subsubcommand")
     config_subcommand = config_cmd.add_subparsers(dest="subcommand")
 
     subparsers.setup_bot_start(bot_subcommand)
     subparsers.setup_add_bot_command(bot_subsubcommand)
     subparsers.setup_delete_bot_command(bot_subsubcommand)
-    subparsers.setup_update_bot_token(config_subcommand)
-    subparsers.setup_update_openai_key(config_subcommand)
+    subparsers.setup_update_config(config_subcommand)
 
     args = parser.parse_args()
     config = configuration.get()
@@ -75,31 +72,13 @@ def discordai():
                 "Must choose a command from `start` or `commands`",
             )
     elif args.command == "config":
-        if args.subcommand == "bot-token":
-            if args.new_token:
-                print(f"Old discord bot token: {config['DISCORD_BOT_TOKEN']}")
-                configuration.save(
-                    dict(
-                        DISCORD_BOT_TOKEN=args.new_token,
-                        OPENAI_API_KEY=config["OPENAI_API_KEY"],
-                    )
-                )
+        if args.subcommand == "update":
+            if args.key in config:
+                config[args.key] = args.value
+                configuration.save(config)
                 config = configuration.get()
-            print(f"Current discord bot token: {config['DISCORD_BOT_TOKEN']}\n")
-        elif args.subcommand == "openai-key":
-            if args.new_key:
-                print(f"Old openAi API key: {config['OPENAI_API_KEY']}")
-                configuration.save(
-                    dict(
-                        DISCORD_BOT_TOKEN=config["DISCORD_BOT_TOKEN"],
-                        OPENAI_API_KEY=args.new_key,
-                    )
-                )
-                config = configuration.get()
-            print(f"Current openAi API key: {config['OPENAI_API_KEY']}\n")
-        else:
-            print(f"Current discord bot token: {config['DISCORD_BOT_TOKEN']}")
-            print(f"Current openAi API key: {config['OPENAI_API_KEY']}\n")
+        print("Config:")
+        command_line.display(config)
 
 
 if __name__ == "__main__":
