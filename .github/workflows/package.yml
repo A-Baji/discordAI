@@ -64,7 +64,7 @@ jobs:
       with:
         python-version: '3.12'
     - name: Install Dependencies
-      run: pip install . pyinstaller==5.7
+      run: pip install . pyinstaller
     # Package
     - name: Windows CLI Package
       if: ${{ matrix.os == 'windows-latest' }}
