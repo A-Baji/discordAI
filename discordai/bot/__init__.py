@@ -140,7 +140,7 @@ def start_bot(discord_token: str, openai_key: str, sync=False):
             )
             data_dir = pathlib.Path(sys._MEIPASS)
             og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-            cogs_path.mkdir(exist_ok=True)
+            os.makedirs(cogs_path, exist_ok=True)
             for file in og_cogs_path.glob("*"):
                 dest_file = cogs_path / file.name
                 shutil.copy2(file, dest_file)
