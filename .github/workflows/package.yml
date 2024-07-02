@@ -69,18 +69,18 @@ jobs:
     - name: Windows CLI Package
       if: ${{ matrix.os == 'windows-latest' }}
       run: |
-        pyinstaller discordai/command_line/command_line.py --console --onefile --name=discordai --add-binary='discordai/bot/cogs;discordai/bot/cogs' --hidden-import=openai --hidden-import=tiktoken --collect-data=discordai_modelizer
+        pyinstaller discordai/command_line/command_line.py --console --onefile --name=discordai --add-binary='discordai/bot/cogs;discordai/bot/cogs' --hidden-import=openai --hidden-import=tiktoken --collect-data=better_profanity --collect-data=discordai_modelizer
         Compress-Archive -Path dist\*discordai* -DestinationPath discordai-windows.zip
     - name: Mac CLI Package
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
-        pyinstaller discordai/command_line/command_line.py --console --onefile --name=discordai --add-data='discordai/bot/cogs:discordai/bot/cogs' --hidden-import=openai --hidden-import=tiktoken --hidden-import=configparser --collect-data=discordai_modelizer --collect-data=aiohttp --collect-data=certifi
+        pyinstaller discordai/command_line/command_line.py --console --onefile --name=discordai --add-data='discordai/bot/cogs:discordai/bot/cogs' --hidden-import=openai --hidden-import=tiktoken --collect-data=better_profanity --hidden-import=configparser --collect-data=discordai_modelizer --collect-data=aiohttp --collect-data=certifi
         zip -j discordai-macos.zip dist/*discordai*
         chmod +x dist/*discordai*
     - name: Linux CLI Package
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
-        pyinstaller discordai/command_line/command_line.py --console --onefile --name=discordai --add-binary='discordai/bot/cogs:discordai/bot/cogs' --hidden-import=openai --hidden-import=tiktoken --collect-data=discordai_modelizer
+        pyinstaller discordai/command_line/command_line.py --console --onefile --name=discordai --add-binary='discordai/bot/cogs:discordai/bot/cogs' --hidden-import=openai --hidden-import=tiktoken --collect-data=better_profanity --collect-data=discordai_modelizer
         zip -j discordai-linux.zip dist/*discordai*
         chmod +x dist/*discordai*
     # Upload
