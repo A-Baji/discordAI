@@ -45,18 +45,18 @@ def discordai():
         command_line.read_modelizer_args(args, model_subcommand, job_subcommand)
     elif args.command == "bot":
         if args.subcommand == "start":
-            bot.start_bot(config, args.sync)
+            bot.start_bot(args.discord_token, args.openai_key, args.sync)
         elif args.subcommand == "command":
-            if args.subsubcommand == "new":
+            if args.subsubcommand == "add":
                 template.gen_new_command(
                     args.model_id,
+                    args.openai_key,
                     args.command_name,
                     args.temp_default,
                     args.pres_default,
                     args.freq_default,
                     args.max_tokens_default,
                     args.stop_default,
-                    args.openai_key,
                     args.bold_default,
                 )
             elif args.subsubcommand == "delete":
@@ -64,7 +64,7 @@ def discordai():
             else:
                 raise argparse.ArgumentError(
                     bot_subsubcommand,
-                    "Must choose a command from `new` or `delete`",
+                    "Must choose a command from `add` or `delete`",
                 )
         else:
             raise argparse.ArgumentError(
@@ -77,7 +77,7 @@ def discordai():
                 config[args.key] = args.value
                 configuration.save(config)
                 config = configuration.get()
-        print("Config:")
+        print(f"{configuration.config_dir / 'config.json'}:")
         command_line.display(config)
 
 

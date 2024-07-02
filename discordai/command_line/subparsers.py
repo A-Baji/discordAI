@@ -1,18 +1,38 @@
-from discordai_modelizer.command_line.subparsers import set_openai_help_str
+from discordai_modelizer.command_line.subparsers import (
+    set_openai_help_str,
+    set_bot_key_help_str,
+)
 
 
 def setup_bot_start(bot_subcommand):
     bot_cmd_start = bot_subcommand.add_parser("start", help="Start your discord bot")
+    bot_cmd_required_named = bot_cmd_start.add_argument_group(
+        "required named arguments"
+    )
     bot_cmd_optional_named = bot_cmd_start.add_argument_group(
         "optional named arguments"
     )
 
+    bot_cmd_required_named.add_argument(
+        "-d",
+        "--discord-token",
+        type=str,
+        dest="discord_token",
+        help=f"The Discord token for your bot. Must either be passed in as an argument or set {set_bot_key_help_str(is_parent=True)}",
+    )
+    bot_cmd_required_named.add_argument(
+        "-o",
+        "--openai-key",
+        type=str,
+        dest="openai_key",
+        help=f"The OpenAI API key to use for various OpenAI operations. Must either be passed in as an argument or set {set_openai_help_str(is_parent=True)}",
+    )
     bot_cmd_optional_named.add_argument(
         "--sync",
         action="store_true",
         required=False,
         dest="sync",
-        help="Sync discord commands gloablly on start up",
+        help="Sync Discord commands globally on start up",
     )
 
 
@@ -25,7 +45,7 @@ def setup_add_bot_command(bot_cmd_commands_subcommand):
     add_cmd_optional_named = add_cmd.add_argument_group("optional named arguments")
 
     add_cmd_required_named.add_argument(
-        "-n",
+        "-c",
         "--command-name",
         type=str,
         required=True,
@@ -33,7 +53,7 @@ def setup_add_bot_command(bot_cmd_commands_subcommand):
         help="The name you want to use for the command",
     )
     add_cmd_required_named.add_argument(
-        "-i",
+        "-m",
         "--model-id",
         type=str,
         required=True,
@@ -76,7 +96,7 @@ def setup_add_bot_command(bot_cmd_commands_subcommand):
         help="The default frequency penalty to use for completions: DEFAULT=0",
     )
     add_cmd_optional_named.add_argument(
-        "-m",
+        "-n",
         "--max-tokens-default",
         type=int,
         default=125,
@@ -109,7 +129,7 @@ def setup_delete_bot_command(bot_cmd_commands_subcommand):
     )
 
     delete_cmd_required_named.add_argument(
-        "-n",
+        "-c",
         "--command-name",
         type=str,
         required=True,
