@@ -68,7 +68,7 @@ class {class_name}(commands.Cog, name="{command_name}"):
                 echo=False,
                 stop='.' if stop else None,
             )
-            emojied_response = re.sub(r":(\w+):", lambda match: replace_emoji(
+            emojied_response = re.sub(r":(\\w+):", lambda match: replace_emoji(
                 match.group(1), context.bot.emoji_map), f"{{'**' if bold and prompt else ''}}{{prompt}}{{'**' if bold and prompt else ''}}{{response[\'choices\'][0][\'text\']}}")
             await context.send(emojied_response[:2000])
         except Exception as error:
@@ -85,43 +85,23 @@ async def setup(bot):
 config_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
 
 
-def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_default: float, freq_default: float,
-                    max_tokens_default: int, stop_default: bool, openai_key: str, bold_default: bool):
-    if getattr(sys, 'frozen', False):
+def gen_new_command(
+    model_id: str,
+    openai_key: str,
+    command_name: str,
+    temp_default: float = 1.0,
+    pres_default: float = 0.0,
+    freq_default: float = 0.0,
+    max_tokens_default: int = 125,
+    stop_default: bool = False,
+    bold_default: bool = False,
+):
+    if getattr(sys, "frozen", False):
         # The code is being run as a frozen executable
         data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
         cogs_path = data_dir / "discordai" / "bot" / "cogs"
-        if not os.path.exists(cogs_path):
-            data_dir = pathlib.Path(sys._MEIPASS)
-            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-            shutil.copytree(og_cogs_path, cogs_path)
-    else:
-        # The code is being run normally
-        template_dir = pathlib.Path(os.path.dirname(__file__))
-        cogs_path = template_dir / "bot"/ "cogs"
-    with open(pathlib.Path(cogs_path, f"{command_name}.py"), "w") as f:
-        os.makedirs(cogs_path, exist_ok=True)
-        f.write(
-            template.format(
-                model_id=model_id, class_name=command_name.capitalize(),
-                command_name=command_name, temp_default=float(temp_default),
-                pres_default=float(pres_default),
-                freq_default=float(freq_default),
-                max_tokens_default=max_tokens_default, stop_default=stop_default, openai_key=openai_key, bold_default = bold_default,
-                error="f\"Failed to generate valid response for prompt: {prompt}\\nError: {error}\""))
-        print(f"Successfully created new slash command: /{command_name} using model {model_id}")
-
-
-def delete_command(command_name: str):
-    confirm = input("Are you sure you want to delete this command? This action is not reversable. Y/N: ")
-    if confirm not in ["Y", "y", "yes", "Yes", "YES"]:
-        print("Cancelling command deletion...")
-        return
-    if getattr(sys, 'frozen', False):
-        # The code is being run as a frozen executable
-        data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
-        cogs_path = data_dir / "discordai" / "bot" / "cogs"
-        if not os.path.exists(cogs_path):
+        if not cogs_path.exists():
+            # Copy files from the bundled location to the user data directory
             data_dir = pathlib.Path(sys._MEIPASS)
             og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
             shutil.copytree(og_cogs_path, cogs_path)
@@ -129,8 +109,51 @@ def delete_command(command_name: str):
         # The code is being run normally
         template_dir = pathlib.Path(os.path.dirname(__file__))
         cogs_path = template_dir / "bot" / "cogs"
-    try:
-        os.remove(pathlib.Path(cogs_path, f"{command_name}.py"))
+    with open(pathlib.Path(cogs_path, f"{command_name}.py"), "w") as f:
+        cogs_path.mkdir(exist_ok=True)
+        f.write(
+            template.format(
+                model_id=model_id,
+                openai_key=openai_key,
+                command_name=command_name,
+                temp_default=float(temp_default),
+                pres_default=float(pres_default),
+                freq_default=float(freq_default),
+                max_tokens_default=max_tokens_default,
+                stop_default=stop_default,
+                bold_default=bold_default,
+                class_name=command_name.capitalize(),
+                error='f"Failed to generate valid response for prompt: {prompt}\\nError: {error}"',
+            )
+        )
+        print(
+            f"Successfully created new slash command: /{command_name} using model {model_id}"
+        )
+
+
+def delete_command(command_name: str):
+    confirm = input(
+        "Are you sure you want to delete this command? This action is not reversable. Y/N: "
+    )
+    if confirm.lower() not in ["y", "yes"]:
+        print("Cancelling command deletion...")
+        return
+    if getattr(sys, "frozen", False):
+        # The code is being run as a frozen executable
+        data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
+        cogs_path = data_dir / "discordai" / "bot" / "cogs"
+        if not cogs_path.exists():
+            # Copy files from the bundled location to the user data directory
+            data_dir = pathlib.Path(sys._MEIPASS)
+            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
+            shutil.copytree(og_cogs_path, cogs_path)
+    else:
+        # The code is being run normally
+        template_dir = pathlib.Path(os.path.dirname(__file__))
+        cogs_path = template_dir / "bot" / "cogs"
+    cmd_file = pathlib.Path(cogs_path, f"{command_name}.py")
+    if cmd_file.exists():
+        cmd_file.unlink()
         print(f"Successfully deleted command: /{command_name}")
-    except FileNotFoundError:
+    else:
         print("Failed to delete command: No command with that name was found.")

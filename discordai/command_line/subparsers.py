@@ -1,3 +1,6 @@
+from discordai_modelizer.command_line.subparsers import set_openai_help_str
+
+
 def setup_bot_start(bot_subcommand):
     bot_cmd_start = bot_subcommand.add_parser("start", help="Start your discord bot")
     bot_cmd_optional_named = bot_cmd_start.add_argument_group(
@@ -37,13 +40,13 @@ def setup_add_bot_command(bot_cmd_commands_subcommand):
         dest="model_id",
         help="The ID of the customized model for the slash command to use",
     )
-    add_cmd_optional_named.add_argument(
+    add_cmd_required_named.add_argument(
         "-o",
         "--openai-key",
         type=str,
         required=False,
         dest="openai_key",
-        help="The openAI key associated with the model being used: DEFAULT=config.OPENAI_API_KEY",
+        help=f"The OpenAI API key associated with the model being used.  Must either be passed in as an argument or set {set_openai_help_str(is_parent=True)}",
     )
     add_cmd_optional_named.add_argument(
         "-t",
@@ -86,14 +89,14 @@ def setup_add_bot_command(bot_cmd_commands_subcommand):
         action="store_true",
         required=False,
         dest="stop_default",
-        help="Set the stop option to use for completions to True",
+        help="Set the stop option to use for completions to True, which will stop completions at the first '.'",
     )
     add_cmd_optional_named.add_argument(
         "--bold_default",
         action="store_true",
         required=False,
         dest="bold_default",
-        help="Set the bolden option for prompts to True",
+        help="Set the bolden option for prompts to True, which will bolden the prompt portion of a completion",
     )
 
 
