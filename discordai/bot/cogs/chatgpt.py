@@ -10,7 +10,6 @@ from typing import Literal
 from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context
-from enum import Enum
 from openai import OpenAI
 
 
