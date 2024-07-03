@@ -100,6 +100,26 @@ async def setup(bot):
 config_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
 
 
+def set_cogs_path():
+    if getattr(sys, "frozen", False):
+        # The code is being run as a frozen executable
+        data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
+        cogs_path = data_dir / "discordai" / "bot" / "cogs"
+    else:
+        # The code is being run normally
+        template_dir = pathlib.Path(os.path.dirname(__file__))
+        cogs_path = template_dir / "bot" / "cogs"
+    return cogs_path
+
+
+def init_cogs(cogs_path):
+    if not cogs_path.exists():
+        # Copy files from the bundled location to the user data directory
+        data_dir = pathlib.Path(sys._MEIPASS)
+        og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
+        shutil.copytree(og_cogs_path, cogs_path)
+
+
 def gen_new_command(
     model_id: str,
     openai_key: str,
@@ -111,19 +131,8 @@ def gen_new_command(
     stop_default: bool = False,
     bold_default: bool = False,
 ):
-    if getattr(sys, "frozen", False):
-        # The code is being run as a frozen executable
-        data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
-        cogs_path = data_dir / "discordai" / "bot" / "cogs"
-        if not cogs_path.exists():
-            # Copy files from the bundled location to the user data directory
-            data_dir = pathlib.Path(sys._MEIPASS)
-            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-            shutil.copytree(og_cogs_path, cogs_path)
-    else:
-        # The code is being run normally
-        template_dir = pathlib.Path(os.path.dirname(__file__))
-        cogs_path = template_dir / "bot" / "cogs"
+    cogs_path = set_cogs_path()
+    init_cogs(cogs_path)
     with open(pathlib.Path(cogs_path, f"{command_name}.py"), "w") as f:
         cogs_path.mkdir(exist_ok=True)
         f.write(
@@ -153,22 +162,15 @@ def delete_command(command_name: str):
     if confirm.lower() not in ["y", "yes"]:
         print("Cancelling command deletion...")
         return
-    if getattr(sys, "frozen", False):
-        # The code is being run as a frozen executable
-        data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
-        cogs_path = data_dir / "discordai" / "bot" / "cogs"
-        if not cogs_path.exists():
-            # Copy files from the bundled location to the user data directory
-            data_dir = pathlib.Path(sys._MEIPASS)
-            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-            shutil.copytree(og_cogs_path, cogs_path)
-    else:
-        # The code is being run normally
-        template_dir = pathlib.Path(os.path.dirname(__file__))
-        cogs_path = template_dir / "bot" / "cogs"
+    cogs_path = set_cogs_path()
+    init_cogs(cogs_path)
     cmd_file = pathlib.Path(cogs_path, f"{command_name}.py")
     if cmd_file.exists():
         cmd_file.unlink()
         print(f"Successfully deleted command: /{command_name}")
     else:
         print("Failed to delete command: No command with that name was found.")
+
+
+def list_commands():
+    pass
