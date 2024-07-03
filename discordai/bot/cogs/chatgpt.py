@@ -6,118 +6,122 @@ Description:
 Version: 5.4.1
 """
 
+from typing import Literal
 from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context
-from enum import Enum
+from openai import OpenAI
 
-import openai
-import tiktoken
-
-class Roles(Enum):
-    system = "system"
-    user = "user"
-    assistant = "assistant"
-
-class Warnings(Enum):
-    low = ""
-    medium = "\n:warning:You are nearing the size limit for chatGPT's chat history:warning:"
-    high = ":exclamation:You have reached the size limit for chatGPT's chat history. Use the `/resetchat` command to continue using chatGPT:exclamation:"
-
-def num_tokens_from_messages(messages, model):
-    """Returns the number of tokens used by a list of messages."""
-    try:
-        encoding = tiktoken.encoding_for_model(model)
-    except KeyError:
-        encoding = tiktoken.get_encoding("cl100k_base")
-    num_tokens = 0
-    for message in messages:
-        num_tokens += 4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
-        for key, value in message.items():
-            num_tokens += len(encoding.encode(value))
-            if key == "name":  # if there's a name, the role is omitted
-                num_tokens += -1  # role is always required and always 1 token
-    num_tokens += 2  # every reply is primed with <im_start>assistant
-    return num_tokens
 
 class ChatGPT(commands.Cog, name="chatgpt"):
+    models = Literal["gpt-3.5-turbo", "gpt-4o", "gpt-4-turbo"]
+
     def __init__(self, bot):
         self.bot = bot
 
     @commands.hybrid_command(
         name="chatgpt",
-        description="Generate an chatGPT completion",
+        description="Generate OpenAI chat conversations",
     )
     @app_commands.describe(
-        prompt="The prompt to pass to chatGPT",
-        role=" system | user | asssistant: Default=user",
-        temp="What sampling temperature to use. Higher values means more risks: Min=0 Max=1 Default=1",
-        presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2 Max=2 Default=0",
-        frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2 Max=2 Default=0")
-    async def chatgpt(self, context: Context, prompt: str, role: Roles = Roles.user, temp: float = 1.0,
-                     presence_penalty: float = 0.0, frequency_penalty: float = 0.0):
-        openai.api_key = self.bot.config["openai_key"]
-        model = "gpt-3.5-turbo"
-        temp = min(max(temp, 0), 1)
-        presPen = min(max(presence_penalty, -2), 2)
-        freqPen = min(max(frequency_penalty, -2), 2)
-
+        prompt="The prompt to pass in",
+        model="Listed by cost: Default=gpt-3.5-turbo",
+        temp="Number between 0.0 and 2.0. Higher values means more risks: Min=0.0 Max=2.0 Default=1.0",
+        presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2.0 Max=2.0 Default=0.0",
+        frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2.0 Max=2.0 Default=0.0",
+        max_tokens="The max number of tokens allowed to be generated. Completion cost scales with token count: Default=300",
+    )
+    async def chatgpt(
+        self,
+        context: Context,
+        prompt: str,
+        model: models = "gpt-3.5-turbo",
+        temp: float = 1.0,
+        presence_penalty: float = 0.0,
+        frequency_penalty: float = 0.0,
+        max_tokens: int = 300,
+    ):
+        client = OpenAI(api_key=self.bot.OPENAI_API_KEY)
         if context.guild.id not in self.bot.chat_messages:
-            self.bot.chat_messages[context.guild.id] = []
-        self.bot.chat_messages[context.guild.id].append({"role": role.value, "content": prompt})
+            self.bot.chat_messages[context.guild.id] = [
+                {"role": "system", "content": "You are a helpful assistant."}
+            ]
+        self.bot.chat_messages[context.guild.id].append(
+            {"role": "user", "content": prompt}
+        )
         messages = self.bot.chat_messages[context.guild.id]
-
-        token_cost = num_tokens_from_messages(messages, model)
-        if 325 <= 4096-token_cost:
-            warning = Warnings.low
-        elif 4096-token_cost >= 5:
-            warning = Warnings.medium
-        else:
-            warning = Warnings.high
 
         await context.defer()
         try:
-            if warning == Warnings.high:
-                await context.send(warning.value)
-            else:
-                response = openai.ChatCompletion.create(
-                    model=model,
-                    messages=messages,
-                    temperature=temp,
-                    frequency_penalty=presPen,
-                    presence_penalty=freqPen,
-                    max_tokens=325 if 325 <= 4096-token_cost else token_cost
-                )
-                await context.send(f"{prompt}\n\n{response['choices'][0]['message']['content']}{warning.value}"[:2000])
-                self.bot.chat_messages[context.guild.id].append(response['choices'][0]['message'])
-        except Exception as error:
-            print(f"Failed to generate valid response for prompt: {prompt}\nError: {error}")
-            await context.send(
-                f"Failed to generate valid response for prompt: {prompt}\nError: {error}"
+            response = client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temp,
+                frequency_penalty=presence_penalty,
+                presence_penalty=frequency_penalty,
+                max_tokens=max_tokens,
             )
+            message = response.choices[0].message
+            await context.send(f"{prompt}\n\n{message.content}"[:2000])
+            self.bot.chat_messages[context.guild.id].append(message)
+        except Exception as error:
+            params = dict(
+                prompt=prompt,
+                model=model,
+                temp=temp,
+                presence_penalty=presence_penalty,
+                frequency_penalty=frequency_penalty,
+                max_tokens=max_tokens,
+            )
+            print(
+                f"Failed to generate valid response with parameters: {params}\nError: {error}"[
+                    :2000
+                ]
+            )
+            await context.send(
+                f"Failed to generate valid response with paramaters: {params}\nError: {error}"[
+                    :2000
+                ]
+            )
+        client.close()
 
     @commands.hybrid_command(
         name="chatreset",
-        description="Resets the chat history for chatGPT completions",
+        description="Resets the chat history for ChatGPT conversations",
     )
     async def chatreset(self, context):
-        self.bot.chat_messages[context.guild.id] = []
+        self.bot.chat_messages[context.guild.id] = [
+            self.bot.chat_messages[context.guild.id][0]
+        ]
         await context.send("Chat history has been reset")
 
     @commands.hybrid_command(
         name="chatinit",
-        description="Initialize chatGPT with an instructional message",
+        description="Initialize ChatGPT's instructional system message",
     )
-    @app_commands.describe(message="The initialization message")
+    @app_commands.describe(
+        message="The initialization message. Ex: You are a helpful assistant that speaks with a southern drawl."
+    )
     async def chatinit(self, context, message: str):
         if context.guild.id in self.bot.chat_messages:
-            if self.bot.chat_messages[context.guild.id] and self.bot.chat_messages[context.guild.id][0]["role"] == "system":
-                self.bot.chat_messages[context.guild.id][0] = {"role": "system", "content": message}
+            if self.bot.chat_messages[context.guild.id][0]["role"] == "system":
+                # Overwrite system message
+                self.bot.chat_messages[context.guild.id][0] = {
+                    "role": "system",
+                    "content": message,
+                }
             else:
-                self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": message}] + self.bot.chat_messages[context.guild.id]
+                # Push system message if nonexistant
+                self.bot.chat_messages[context.guild.id].insert(
+                    {"role": "system", "content": message}, 0
+                )
         else:
-            self.bot.chat_messages[context.guild.id] = [{"role": "system", "content": message}]
-        await context.send(f"ChatGPT has been initialized with \"{message}\"")
+            # Init guild messages with system message
+            self.bot.chat_messages[context.guild.id] = [
+                {"role": "system", "content": message}
+            ]
+        await context.send(f'ChatGPT has been initialized with "{message}"')
+
 
 async def setup(bot):
     await bot.add_cog(ChatGPT(bot))

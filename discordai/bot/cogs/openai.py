@@ -9,66 +9,72 @@ Version: 5.4.1
 from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context
-from enum import Enum
+from openai import OpenAI as OpenAI_API
+from typing import Literal
 
-import openai
-
-class Models(Enum):
-    chatgpt = "gpt-3.5-turbo"
-    davinci = "text-davinci-003"
-    curie = "text-curie-001"
-    babbage = "text-babbage-001"
-    ada = "text-ada-001"
 
 class OpenAI(commands.Cog, name="openai"):
+    models = Literal["gpt-3.5-turbo", "gpt-4o", "gpt-4-turbo"]
+
     def __init__(self, bot):
         self.bot = bot
 
     @commands.hybrid_command(
         name="openai",
-        description="Generate an openAI completion",
+        description="Generate an OpenAI chat completion",
     )
     @app_commands.describe(
-        prompt="The prompt to pass to openAI",
-        model=" chatgpt | davinci | curie | babbage | ada:  Default=chatgpt",
-        temp="What sampling temperature to use. Higher values means more risks: Min=0 Max=1 Default=1",
-        presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2 Max=2 Default=0",
-        frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2 Max=2 Default=0")
-    async def openai(self, context: Context, prompt: str, model: Models = Models.chatgpt, temp: float = 1.0,
-                     presence_penalty: float = 0.0, frequency_penalty: float = 0.0):
-        openai.api_key = self.bot.config["openai_key"]
-        temp = min(max(temp, 0), 1)
-        presPen = min(max(presence_penalty, -2), 2)
-        freqPen = min(max(frequency_penalty, -2), 2)
-
+        prompt="The prompt to pass in",
+        model="Listed by cost: Default=gpt-3.5-turbo",
+        temp="Number between 0.0 and 2.0. Higher values means more risks: Min=0.0 Max=2.0 Default=1.0",
+        presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2.0 Max=2.0 Default=0.0",
+        frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2.0 Max=2.0 Default=0.0",
+        max_tokens="The max number of tokens allowed to be generated. Completion cost scales with token count: Default=300",
+    )
+    async def openai(
+        self,
+        context: Context,
+        prompt: str,
+        model: models = "gpt-3.5-turbo",
+        temp: float = 1.0,
+        presence_penalty: float = 0.0,
+        frequency_penalty: float = 0.0,
+        max_tokens: int = 300,
+    ):
+        client = OpenAI_API(api_key=self.bot.OPENAI_API_KEY)
         await context.defer()
         try:
-            if model.value == 'gpt-3.5-turbo':
-                response = openai.ChatCompletion.create(
-                    model=model.value,
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=temp,
-                    frequency_penalty=presPen,
-                    presence_penalty=freqPen,
-                    max_tokens=325
-                )
-                await context.send(f"{prompt}\n\n{response['choices'][0]['message']['content']}"[:2000])
-            else:
-                response = openai.Completion.create(
-                    engine=model.value,
-                    prompt=prompt,
-                    temperature=temp,
-                    frequency_penalty=presPen,
-                    presence_penalty=freqPen,
-                    max_tokens=325,
-                    echo=True
-                )
-                await context.send(response["choices"][0]["text"][:2000])
-        except Exception as error:
-            print(f"Failed to generate valid response for prompt: {prompt}\nError: {error}")
-            await context.send(
-                f"Failed to generate valid response for prompt: {prompt}\nError: {error}"
+            response = client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=temp,
+                frequency_penalty=presence_penalty,
+                presence_penalty=frequency_penalty,
+                max_tokens=max_tokens,
             )
+            await context.send(
+                f"{prompt}\n\n{response.choices[0].message.content}"[:2000]
+            )
+        except Exception as error:
+            params = dict(
+                prompt=prompt,
+                model=model,
+                temp=temp,
+                presence_penalty=presence_penalty,
+                frequency_penalty=frequency_penalty,
+                max_tokens=max_tokens,
+            )
+            print(
+                f"Failed to generate valid response with parameters: {params}\nError: {error}"[
+                    :2000
+                ]
+            )
+            await context.send(
+                f"Failed to generate valid response with paramaters: {params}\nError: {error}"[
+                    :2000
+                ]
+            )
+        client.close()
 
 
 async def setup(bot):

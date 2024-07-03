@@ -18,6 +18,7 @@ import importlib.util
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot, Context
+from discordai.template import set_cogs_path, init_cogs
 from discordai import __version__ as version
 
 intents = discord.Intents.default()
@@ -49,7 +50,11 @@ def start_bot(discord_token: str, openai_key: str, sync=False):
         for guild in bot.guilds:
             for emoji in guild.emojis:
                 if emoji.name not in bot.emoji_map:
-                    bot.emoji_map[emoji.name] = [emoji.id, emoji.animated]
+                    bot.emoji_map[emoji.name.lower()] = {
+                        "id": emoji.id,
+                        "name": emoji.name,
+                        "is_animated": emoji.animated,
+                    }
         print("-------------------")
 
     @bot.event
@@ -130,20 +135,10 @@ def start_bot(discord_token: str, openai_key: str, sync=False):
         """
         The code in this function is executed whenever the bot will start.
         """
+        cogs_path = set_cogs_path()
+        init_cogs(cogs_path)
         if getattr(sys, "frozen", False):
             # The code is being run as a frozen executable
-            cogs_path = (
-                pathlib.Path(appdirs.user_data_dir(appname="discordai"))
-                / "discordai"
-                / "bot"
-                / "cogs"
-            )
-            data_dir = pathlib.Path(sys._MEIPASS)
-            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-            os.makedirs(cogs_path, exist_ok=True)
-            for file in og_cogs_path.glob("*"):
-                dest_file = cogs_path / file.name
-                shutil.copy2(file, dest_file)
             for file in cogs_path.glob("*.py"):
                 if file.stem != "__init__":
                     try:
@@ -159,9 +154,6 @@ def start_bot(discord_token: str, openai_key: str, sync=False):
                         exception = f"{type(e).__name__}: {e}"
                         print(f"Failed to load extension {file.stem}\n{exception}")
         else:
-            # The code is being run normally
-            bot_dir = pathlib.Path(os.path.dirname(__file__))
-            cogs_path = bot_dir / "cogs"
             for file in cogs_path.glob("*.py"):
                 if file.stem != "__init__":
                     try:
