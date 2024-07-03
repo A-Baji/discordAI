@@ -65,7 +65,11 @@ class ImageAI(commands.Cog, name="imageai"):
             await context.send(response.data[0].url)
         except Exception as error:
             params = dict(
-                prompt=prompt, model=model, size=size_map[model][size], **params
+                prompt=prompt,
+                model=model,
+                size=size,
+                quality=quality,
+                style=style,
             )
             print(f"Failed to generate image with parameters: {prompt}\nError: {error}")
             await context.send(

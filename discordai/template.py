@@ -76,14 +76,13 @@ class {class_name}(commands.Cog, name="{command_name}"):
             await context.send(emojied_response[:2000])
         except Exception as error:
             params = dict(
-                model="{model_id}",
                 prompt=prompt,
-                temperature=temp,
-                frequency_penalty=presence_penalty,
-                presence_penalty=frequency_penalty,
+                temp=temp,
+                presence_penalty=presence_penalty,
+                frequency_penalty=frequency_penalty,
                 max_tokens=max_tokens,
-                echo=False,
-                stop="." if stop else None,
+                stop=stop,
+                bold=bold,
             )
             print(
                 {error}

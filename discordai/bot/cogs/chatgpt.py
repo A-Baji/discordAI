@@ -67,11 +67,11 @@ class ChatGPT(commands.Cog, name="chatgpt"):
             self.bot.chat_messages[context.guild.id].append(message)
         except Exception as error:
             params = dict(
+                prompt=prompt,
                 model=model,
-                messages=f"...[{messages[-1]}]"[:1500],
-                temperature=temp,
-                frequency_penalty=presence_penalty,
-                presence_penalty=frequency_penalty,
+                temp=temp,
+                presence_penalty=presence_penalty,
+                frequency_penalty=frequency_penalty,
                 max_tokens=max_tokens,
             )
             print(

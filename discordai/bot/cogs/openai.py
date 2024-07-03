@@ -57,11 +57,11 @@ class OpenAI(commands.Cog, name="openai"):
             )
         except Exception as error:
             params = dict(
-                model=model,
                 prompt=prompt,
-                temperature=temp,
-                frequency_penalty=presence_penalty,
-                presence_penalty=frequency_penalty,
+                model=model,
+                temp=temp,
+                presence_penalty=presence_penalty,
+                frequency_penalty=frequency_penalty,
                 max_tokens=max_tokens,
             )
             print(

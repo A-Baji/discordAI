@@ -61,12 +61,13 @@ class CustomAI(commands.Cog, name="customai"):
         except Exception as error:
             params = dict(
                 model=model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=temp,
-                frequency_penalty=presence_penalty,
-                presence_penalty=frequency_penalty,
+                prompt=prompt,
+                temp=temp,
+                presence_penalty=presence_penalty,
+                frequency_penalty=frequency_penalty,
                 max_tokens=max_tokens,
-                stop="." if stop else None,
+                stop=stop,
+                openai_key=openai_key,
             )
             print(
                 f"Failed to generate valid response with parameters: {params}\nError: {error}"[
