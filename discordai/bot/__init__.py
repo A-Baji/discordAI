@@ -49,7 +49,11 @@ def start_bot(discord_token: str, openai_key: str, sync=False):
         for guild in bot.guilds:
             for emoji in guild.emojis:
                 if emoji.name not in bot.emoji_map:
-                    bot.emoji_map[emoji.name] = [emoji.id, emoji.animated]
+                    bot.emoji_map[emoji.name.lower()] = {
+                        "id": emoji.id,
+                        "name": emoji.name,
+                        "is_animated": emoji.animated,
+                    }
         print("-------------------")
 
     @bot.event

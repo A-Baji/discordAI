@@ -8,26 +8,18 @@ import appdirs
 template = """from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context
+from openai import OpenAI
 
-import openai
 import re
 
+
 def replace_emoji(emoji_name: str, emoji_map):
-    if emoji_name in emoji_map:
-        if emoji_map[emoji_name][1]:
-            return f"<a:{{emoji_name}}:{{emoji_map[emoji_name][0]}}>"
-        else:
-            return f"<:{{emoji_name}}:{{emoji_map[emoji_name][0]}}>"
-    elif emoji_name.upper() in emoji_map:
-        if emoji_map[emoji_name.upper()][1]:
-            return f"<a:{{emoji_name.upper()}}:{{emoji_map[emoji_name.upper()][0]}}>"
-        else:
-            return f"<:{{emoji_name.upper()}}:{{emoji_map[emoji_name.upper()][0]}}>"
-    elif emoji_name.lower() in emoji_map:
-        if emoji_map[emoji_name.lower()][1]:
-            return f"<a:{{emoji_name.lower()}}:{{emoji_map[emoji_name.lower()][0]}}>"
-        else:
-            return f"<:{{emoji_name.lower()}}:{{emoji_map[emoji_name.lower()][0]}}>"
+    emoji = emoji_name.lower()
+    emoji_id = emoji_map[emoji]["id"]
+    emoji_name = emoji_map[emoji]["name"]
+    is_animated = emoji_map[emoji]["is_animated"]
+    if emoji in emoji_map:
+        return f"<{{'a' if is_animated else ''}}:{{emoji_name}}:{{emoji_id}}>"
     else:
         return f":{{emoji_name}}:"
 
@@ -41,41 +33,65 @@ class {class_name}(commands.Cog, name="{command_name}"):
         description="Generate a completion for {command_name}",
     )
     @app_commands.describe(
-        prompt="The prompt to pass to your model: Default=\\"\\"",
-        temp="What sampling temperature to use. Higher values means more risks: Min=0 Max=1 Default={temp_default}",
-        presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2 Max=2 Default={pres_default}",
-        frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2 Max=2 Default={freq_default}",
-        max_tokens="The max number of tokens to generate. Each token costs credits: Default={max_tokens_default}",
+        prompt='The prompt to pass in: Default=\\"\\"',
+        temp="Number between 0.0 and 2.0. Higher values means more risks: Min=0.0 Max=2.0 Default={temp_default}",
+        presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2.0 Max=2.0 Default={pres_default}",
+        frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2.0 Max=2.0 Default={freq_default}",
+        max_tokens="The max number of tokens allowed to be generated. Completion cost scales with token count: Default={max_tokens_default}",
         stop="Whether to stop after the first sentence: Default={stop_default}",
-        bold="Whether to bolden the original prompt: Default={bold_default}")
-    async def {command_name}(self, context: Context, prompt: str = "", temp: float = {temp_default},
-                       presence_penalty: float = {pres_default}, frequency_penalty: float = {freq_default}, max_tokens: int = {max_tokens_default},
-                       stop: bool = {stop_default}, bold: bool = {bold_default}):
-        temp = min(max(temp, 0), 1)
-        presPen = min(max(presence_penalty, -2), 2)
-        freqPen = min(max(frequency_penalty, -2), 2)
-
+        bold="Whether to bolden the original prompt: Default={bold_default}",
+    )
+    async def {command_name}(
+        self,
+        context: Context,
+        prompt: str = "",
+        temp: float = {temp_default},
+        presence_penalty: float = {pres_default},
+        frequency_penalty: float = {freq_default},
+        max_tokens: int = {max_tokens_default},
+        stop: bool = {stop_default},
+        bold: bool = {bold_default},
+    ):
+        client = OpenAI(
+            api_key="{openai_key}"
+        )
         await context.defer()
         try:
-            openai.api_key = "{openai_key}"
-            response = openai.Completion.create(
-                engine="{model_id}",
+            response = client.completions.create(
+                model="{model_id}",
                 prompt=prompt,
                 temperature=temp,
-                frequency_penalty=presPen,
-                presence_penalty=freqPen,
+                frequency_penalty=presence_penalty,
+                presence_penalty=frequency_penalty,
                 max_tokens=max_tokens,
                 echo=False,
-                stop='.' if stop else None,
+                stop="." if stop else None,
             )
-            emojied_response = re.sub(r":(\\w+):", lambda match: replace_emoji(
-                match.group(1), context.bot.emoji_map), f"{{'**' if bold and prompt else ''}}{{prompt}}{{'**' if bold and prompt else ''}}{{response[\'choices\'][0][\'text\']}}")
+            prompt = f"**{{prompt}}**" if bold else prompt
+            emojied_response = re.sub(
+                r":(\\w+):",
+                lambda match: replace_emoji(match.group(1), context.bot.emoji_map),
+                f"{{prompt}}{{response.choices[0].text}}",
+            )
             await context.send(emojied_response[:2000])
         except Exception as error:
-            print({error})
+            params = dict(
+                model="{model_id}",
+                prompt=prompt,
+                temperature=temp,
+                frequency_penalty=presence_penalty,
+                presence_penalty=frequency_penalty,
+                max_tokens=max_tokens,
+                echo=False,
+                stop="." if stop else None,
+            )
+            print(
+                {error}
+            )
             await context.send(
                 {error}
             )
+        client.close()
 
 
 async def setup(bot):
@@ -123,7 +139,7 @@ def gen_new_command(
                 stop_default=stop_default,
                 bold_default=bold_default,
                 class_name=command_name.capitalize(),
-                error='f"Failed to generate valid response for prompt: {prompt}\\nError: {error}"',
+                error='f"Failed to generate valid response with parameters: {params}\\nError: {error}"[\n\t\t\t\t\t:2000\n\t\t\t\t]',
             )
         )
         print(
