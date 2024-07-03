@@ -65,10 +65,14 @@ class OpenAI(commands.Cog, name="openai"):
                 max_tokens=max_tokens,
             )
             print(
-                f"Failed to generate valid response with parameters: {params}\nError: {error}"
+                f"Failed to generate valid response with parameters: {params}\nError: {error}"[
+                    :2000
+                ]
             )
             await context.send(
-                f"Failed to generate valid response with paramaters: {params}\nError: {error}"
+                f"Failed to generate valid response with paramaters: {params}\nError: {error}"[
+                    :2000
+                ]
             )
         client.close()
 
