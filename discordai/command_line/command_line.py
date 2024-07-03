@@ -28,6 +28,7 @@ def discordai():
     subparsers.setup_bot_start(bot_subcommand)
     subparsers.setup_add_bot_command(bot_subsubcommand)
     subparsers.setup_delete_bot_command(bot_subsubcommand)
+    subparsers.setup_list_bot_command(bot_subsubcommand)
     subparsers.setup_update_config(config_subcommand)
 
     args = parser.parse_args()
@@ -47,7 +48,9 @@ def discordai():
         if args.subcommand == "start":
             bot.start_bot(args.discord_token, args.openai_key, args.sync)
         elif args.subcommand == "command":
-            if args.subsubcommand == "add":
+            if args.subsubcommand == "list":
+                command_line.display(template.list_commands())
+            elif args.subsubcommand == "add":
                 template.gen_new_command(
                     args.model_id,
                     args.openai_key,

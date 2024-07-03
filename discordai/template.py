@@ -173,4 +173,10 @@ def delete_command(command_name: str):
 
 
 def list_commands():
-    pass
+    cogs_path = set_cogs_path()
+    init_cogs(cogs_path)
+    return [
+        f"/{file.stem}"
+        for file in cogs_path.glob("*.py")
+        if file.stem not in ["__init__", "sync"]
+    ]

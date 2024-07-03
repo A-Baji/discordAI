@@ -138,6 +138,12 @@ def setup_delete_bot_command(bot_cmd_commands_subcommand):
     )
 
 
+def setup_list_bot_command(bot_cmd_commands_subcommand):
+    bot_cmd_commands_subcommand.add_parser(
+        "list", help="List all slash commands for your bot"
+    )
+
+
 def setup_update_config(config_subcommand):
     config_command = config_subcommand.add_parser(
         "update", help="Update your DiscordAI config"

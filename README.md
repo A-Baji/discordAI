@@ -13,8 +13,10 @@ DiscordAI is a parent module of [DiscordAI Modelizer](https://github.com/A-Baji/
 - [ ] Integrate Meta AI
 - [ ] Add unit tests
 - [ ] Rewrite documentation
-- [ ] Improve model training method?
+- [x] ~~Improve model training method?~~
 - [ ] Refactor messy code
+- [x] Rework dataset reduction
+- [x] Add `bot command list` command
 
 ## Installation
 ### Executable
@@ -87,11 +89,13 @@ If you have any questions, feel free to make a new post in [discussions](https:/
 Commands related to your discord bot
 #### `discordai bot start`
 Start your discord bot
-#### `discordai bot commands`
+#### `discordai bot command`
 Manage your discord bot's slash commands
-* `discordai bot commands new`
+* `discordai bot commands list`
+  * List all slash commands for your bot
+* `discordai bot command new`
   * Create a new slash command for your bot that will use a customized model for completions
-* `discordai bot commands delete`
+* `discordai bot command delete`
   * Delete a slash command from your bot
 #### `@<your_bot> sync|unsyc guild|global`
 These are special non-CLI commands that must be run *in discord*, in a channel that your bot is a member of. They are used to update or remove your bot's slash commands from discord's servers.
@@ -107,8 +111,10 @@ Delete an openAI customized model
 Commands related to your openAI jobs
 #### `discordai job list`
 List your openAI customization jobs
-#### `discordai job status`
-Get an openAI customization job's status
+#### `discordai job info`
+Get an openAI customization job's info
+#### `discordai job events`
+Get an openAI customization job's events
 #### `discordai job cancel`
 Cancel an openAI customization job
 ### Config
