@@ -70,9 +70,7 @@ class CustomAI(commands.Cog, name="customai"):
                 openai_key=openai_key,
             )
             print(
-                f"Failed to generate valid response with parameters: {params}\nError: {error}"[
-                    :2000
-                ]
+                f"Failed to generate valid response with parameters: {params}\nError: {error}"
             )
             await context.send(
                 f"Failed to generate valid response with paramaters: {params}\nError: {error}"[

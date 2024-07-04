@@ -74,9 +74,7 @@ class ChatGPT(commands.Cog, name="chatgpt"):
                 max_tokens=max_tokens,
             )
             print(
-                f"Failed to generate valid response with parameters: {params}\nError: {error}"[
-                    :2000
-                ]
+                f"Failed to generate valid response with parameters: {params}\nError: {error}"
             )
             await context.send(
                 f"Failed to generate valid response with paramaters: {params}\nError: {error}"[
@@ -120,7 +118,7 @@ class ChatGPT(commands.Cog, name="chatgpt"):
             self.bot.chat_messages[context.guild.id] = [
                 {"role": "system", "content": message}
             ]
-        await context.send(f'ChatGPT has been initialized with "{message}"')
+        await context.send(f'ChatGPT has been initialized with "{message}"'[:2000])
 
 
 async def setup(bot):
