@@ -88,7 +88,9 @@ class {class_name}(commands.Cog, name="{command_name}"):
                 {error}
             )
             await context.send(
-                {error}
+                {error}[
+                    :2000
+                ]
             )
         client.close()
 
@@ -147,7 +149,7 @@ def gen_new_command(
                 stop_default=stop_default,
                 bold_default=bold_default,
                 class_name=command_name.capitalize(),
-                error='f"Failed to generate valid response with parameters: {params}\\nError: {error}"[\n\t\t\t\t\t:2000\n\t\t\t\t]',
+                error='f"Failed to generate valid response with parameters: {params}\\nError: {error}"',
             )
         )
         print(
