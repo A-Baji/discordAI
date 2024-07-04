@@ -102,11 +102,16 @@ async def setup(bot):
 config_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
 
 
-def set_cogs_path():
+def get_cogs_path():
     if getattr(sys, "frozen", False):
         # The code is being run as a frozen executable
         data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
         cogs_path = data_dir / "discordai" / "bot" / "cogs"
+        if not cogs_path.exists():
+            # Copy files from the bundled location to the user data directory
+            data_dir = pathlib.Path(sys._MEIPASS)
+            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
+            shutil.copytree(og_cogs_path, cogs_path)
     else:
         # The code is being run normally
         template_dir = pathlib.Path(os.path.dirname(__file__))
@@ -114,18 +119,10 @@ def set_cogs_path():
     return cogs_path
 
 
-def init_cogs(cogs_path):
-    if not cogs_path.exists():
-        # Copy files from the bundled location to the user data directory
-        data_dir = pathlib.Path(sys._MEIPASS)
-        og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-        shutil.copytree(og_cogs_path, cogs_path)
-
-
 def gen_new_command(
     model_id: str,
-    openai_key: str,
     command_name: str,
+    openai_key: str = os.getenv("OPENAI_API_KEY"),
     temp_default: float = 1.0,
     pres_default: float = 0.0,
     freq_default: float = 0.0,
@@ -133,8 +130,7 @@ def gen_new_command(
     stop_default: bool = False,
     bold_default: bool = False,
 ):
-    cogs_path = set_cogs_path()
-    init_cogs(cogs_path)
+    cogs_path = get_cogs_path()
     with open(pathlib.Path(cogs_path, f"{command_name}.py"), "w") as f:
         cogs_path.mkdir(exist_ok=True)
         f.write(
@@ -157,15 +153,18 @@ def gen_new_command(
         )
 
 
-def delete_command(command_name: str):
-    confirm = input(
-        "Are you sure you want to delete this command? This action is not reversable. Y/N: "
+def delete_command(command_name: str, force=False):
+    confirm = (
+        "yes"
+        if force
+        else input(
+            "Are you sure you want to delete this command? This action is not reversable. Y/N: "
+        )
     )
     if confirm.lower() not in ["y", "yes"]:
         print("Cancelling command deletion...")
         return
-    cogs_path = set_cogs_path()
-    init_cogs(cogs_path)
+    cogs_path = get_cogs_path()
     cmd_file = pathlib.Path(cogs_path, f"{command_name}.py")
     if cmd_file.exists():
         cmd_file.unlink()
@@ -175,8 +174,7 @@ def delete_command(command_name: str):
 
 
 def list_commands():
-    cogs_path = set_cogs_path()
-    init_cogs(cogs_path)
+    cogs_path = get_cogs_path()
     return [
         f"/{file.stem}"
         for file in cogs_path.glob("*.py")

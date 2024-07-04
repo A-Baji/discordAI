@@ -18,7 +18,7 @@ import importlib.util
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot, Context
-from discordai.template import set_cogs_path, init_cogs
+from discordai.template import get_cogs_path
 from discordai import __version__ as version
 
 intents = discord.Intents.default()
@@ -135,8 +135,7 @@ def start_bot(discord_token: str, openai_key: str, sync=False):
         """
         The code in this function is executed whenever the bot will start.
         """
-        cogs_path = set_cogs_path()
-        init_cogs(cogs_path)
+        cogs_path = get_cogs_path()
         if getattr(sys, "frozen", False):
             # The code is being run as a frozen executable
             for file in cogs_path.glob("*.py"):
