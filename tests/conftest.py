@@ -5,7 +5,7 @@ import appdirs
 
 from pytest import fixture
 from pathlib import PosixPath, Path
-from discordai import template
+from discordai import template, config
 
 TEST_COMMAND_NAME = "test"
 TEST_COG_PATH = template.get_cogs_path() / f"{TEST_COMMAND_NAME}.py"
@@ -26,3 +26,20 @@ def run_as_frozen():
         rmtree(cogs_data_dir)
     delattr(sys, "_MEIPASS")
     setattr(sys, "frozen", False)
+
+
+@fixture(scope="session")
+def init_config():
+    yield config.get()
+    (config.config_dir / "config.json").unlink(missing_ok=True)
+
+
+@fixture(scope="function")
+def unset_envs():
+    DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
+    OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+    del os.environ["DISCORD_BOT_TOKEN"]
+    del os.environ["OPENAI_API_KEY"]
+    yield
+    os.environ["DISCORD_BOT_TOKEN"] = DISCORD_BOT_TOKEN
+    os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
