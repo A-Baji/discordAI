@@ -53,8 +53,8 @@ def discordai():
             elif args.subsubcommand == "add":
                 template.gen_new_command(
                     args.model_id,
-                    args.openai_key,
                     args.command_name,
+                    args.openai_key,
                     args.temp_default,
                     args.pres_default,
                     args.freq_default,
@@ -80,6 +80,9 @@ def discordai():
                 config[args.key] = args.value
                 configuration.save(config)
                 config = configuration.get()
+            else:
+                print("Invalid key provided!")
+                return
         print(f"{configuration.config_dir / 'config.json'}:")
         command_line.display(config)
 

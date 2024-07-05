@@ -26,6 +26,7 @@ services:
       - ./discordai:/usr/local/lib/python${PY_VER}/site-packages/discordai
       - ./discordAI-modelizer/discordai_modelizer:/usr/local/lib/python${PY_VER}/site-packages/discordai_modelizer
       - ./init.sh:/main/init.sh
+      - ./files/:/root/.local/share/discordai/
     command:
       - sh
       - -c

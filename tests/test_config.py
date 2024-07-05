@@ -1,6 +1,6 @@
-from io import StringIO
 import os
 
+from io import StringIO
 from pytest import fixture
 from discordai import config
 
@@ -24,7 +24,7 @@ def reset_config():
 
 
 def test_get_config(init_config):
-    assert config.get() == {
+    assert init_config == {
         "DISCORD_BOT_TOKEN": f"{os.environ['DISCORD_BOT_TOKEN']}",
         "OPENAI_API_KEY": f"{os.environ['OPENAI_API_KEY']}",
     }
