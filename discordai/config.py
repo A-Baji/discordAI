@@ -38,7 +38,6 @@ def get():
 
 
 def save(config):
-    config_path = pathlib.Path(config_dir, "config.json")
-    config_path.touch(exist_ok=True)
-    with open(config_path, "w") as f:
+    os.makedirs(config_dir, exist_ok=True)
+    with open(pathlib.Path(config_dir, "config.json"), "w") as f:
         f.write(json.dumps(config))
