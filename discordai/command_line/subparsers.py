@@ -127,6 +127,9 @@ def setup_delete_bot_command(bot_cmd_commands_subcommand):
     delete_cmd_required_named = delete_cmd.add_argument_group(
         "required named arguments"
     )
+    delete_cmd_optional_named = delete_cmd.add_argument_group(
+        "optional named arguments"
+    )
 
     delete_cmd_required_named.add_argument(
         "-c",
@@ -135,6 +138,14 @@ def setup_delete_bot_command(bot_cmd_commands_subcommand):
         required=True,
         dest="command_name",
         help="The name of the slash command you want to delete",
+    )
+
+    delete_cmd_optional_named.add_argument(
+        "--force",
+        action="store_true",
+        required=False,
+        dest="force",
+        help="Skips the deletion confirmation dialogue",
     )
 
 

@@ -18,11 +18,13 @@ services:
     env_file: .env.test
     volumes:
       - ./discordai:/usr/local/lib/python${PY_VER}/site-packages/discordai
+      - ./discordAI-modelizer/discordai_modelizer:/usr/local/lib/python${PY_VER}/site-packages/discordai_modelizer
       - ./tests:/main/tests
+      - .coveragerc:/main/.coveragerc
     command:
       - sh
       - -c
       - |
         pip install pytest pytest-cov pytest-console-scripts --root-user-action ignore
-        pytest --cov-report term-missing --cov=discordai tests
+        pytest --cov-report term-missing --cov=discordai  --cov-config=.coveragerc tests
         # tail -f /dev/null

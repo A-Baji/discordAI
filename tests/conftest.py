@@ -28,12 +28,6 @@ def run_as_frozen():
     setattr(sys, "frozen", False)
 
 
-@fixture(scope="session")
-def init_config():
-    yield config.get()
-    (config.config_dir / "config.json").unlink(missing_ok=True)
-
-
 @fixture(scope="function")
 def unset_envs():
     DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
@@ -43,3 +37,51 @@ def unset_envs():
     yield
     os.environ["DISCORD_BOT_TOKEN"] = DISCORD_BOT_TOKEN
     os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+
+
+@fixture(scope="session")
+def init_config():
+    yield config.get()
+    (config.config_dir / "config.json").unlink(missing_ok=True)
+
+
+@fixture(scope="function")
+def reset_config():
+    yield
+    (config.config_dir / "config.json").unlink(missing_ok=True)
+    config.save(
+        dict(
+            DISCORD_BOT_TOKEN=os.environ["DISCORD_BOT_TOKEN"],
+            OPENAI_API_KEY=os.environ["OPENAI_API_KEY"],
+        )
+    )
+
+
+@fixture(scope="module")
+def add_command():
+    template.gen_new_command(
+        model_id=f"{TEST_COMMAND_NAME}", command_name=f"{TEST_COMMAND_NAME}"
+    )
+    yield
+    if TEST_COG_PATH.exists():
+        template.delete_command(command_name=f"{TEST_COMMAND_NAME}", force=True)
+
+
+@fixture(scope="function")
+def remove_command():
+    if TEST_COG_PATH.exists():
+        template.delete_command(command_name=f"{TEST_COMMAND_NAME}", force=True)
+    yield
+    if not TEST_COG_PATH.exists():
+        template.gen_new_command(
+            model_id=f"{TEST_COMMAND_NAME}", command_name=f"{TEST_COMMAND_NAME}"
+        )
+
+
+@fixture(scope="function")
+def reset_command():
+    yield
+    if not TEST_COG_PATH.exists():
+        template.gen_new_command(
+            model_id=f"{TEST_COMMAND_NAME}", command_name=f"{TEST_COMMAND_NAME}"
+        )

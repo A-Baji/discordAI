@@ -63,16 +63,16 @@ def discordai():
                     args.bold_default,
                 )
             elif args.subsubcommand == "delete":
-                template.delete_command(args.command_name)
+                template.delete_command(args.command_name, args.force)
             else:
                 raise argparse.ArgumentError(
                     bot_subsubcommand,
-                    "Must choose a command from `add` or `delete`",
+                    "Must choose a command from `list`, `add`, or `delete`",
                 )
         else:
             raise argparse.ArgumentError(
                 bot_subcommand,
-                "Must choose a command from `start` or `commands`",
+                "Must choose a command from `start` or `command`",
             )
     elif args.command == "config":
         if args.subcommand == "update":

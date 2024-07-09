@@ -12,17 +12,6 @@ def delete_config():
     config.get()
 
 
-@fixture(scope="function")
-def reset_config():
-    yield
-    config.save(
-        dict(
-            DISCORD_BOT_TOKEN=os.environ["DISCORD_BOT_TOKEN"],
-            OPENAI_API_KEY=os.environ["OPENAI_API_KEY"],
-        )
-    )
-
-
 def test_get_config(init_config):
     assert init_config == {
         "DISCORD_BOT_TOKEN": f"{os.environ['DISCORD_BOT_TOKEN']}",

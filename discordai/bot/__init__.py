@@ -8,11 +8,8 @@ Version: 5.4.1
 
 import asyncio
 import os
-import pathlib
 import platform
-import shutil
 import sys
-import appdirs
 import importlib.util
 
 import discord
