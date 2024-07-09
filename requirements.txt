@@ -1,4 +1,4 @@
 discord.py
 openai==1.35.5
 appdirs
-discordai_modelizer @ git+https://github.com/A-Baji/discordAI-modelizer.git@3.0.4
+discordai_modelizer @ git+https://github.com/A-Baji/discordAI-modelizer.git@3.0.5
