@@ -19,6 +19,8 @@ jobs:
           - '3.12'
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
     - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.py_ver }}
@@ -33,10 +35,9 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PYTHONUNBUFFERED: 1
       run: |
-        pip list | grep discord
-        # touch .env.test
-        # export VERSION=$(cat discordai_modelizer/version.py | grep -oP '\d+\.\d+\.\d+')
-        # docker compose -f docker-compose-test.yaml up --build --exit-code-from tests
+        touch .env.test
+        export VERSION=$(cat discordai_modelizer/version.py | grep -oP '\d+\.\d+\.\d+')
+        docker compose -f docker-compose-test.yaml up --build --exit-code-from tests
   release:
     if: |
       github.event_name == 'push' &&
