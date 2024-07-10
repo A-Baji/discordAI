@@ -1,0 +1,30 @@
+# PY_VER=3.12 VERSION=$(cat discordai/version.py | grep -oP '\d+\.\d+\.\d+') docker compose -f docker-compose-test.yaml --env-file .env.test up --build
+# docker exec -it discordai-tests-1 bash
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PY_VER
+    image: discord-ai/discordai:py${PY_VER}-v${VERSION}
+    working_dir: /main
+    environment:
+      - DISCORD_BOT_TOKEN
+      - OPENAI_API_KEY
+      - CHANNEL_ID
+      - USERNAME
+      - PYTHONUNBUFFERED=1
+    env_file: .env.test
+    volumes:
+      - ./discordai:/usr/local/lib/python${PY_VER}/site-packages/discordai
+      - ./discordAI-modelizer/discordai_modelizer:/usr/local/lib/python${PY_VER}/site-packages/discordai_modelizer
+      - ./tests:/main/tests
+      - .coveragerc:/main/.coveragerc
+    command:
+      - sh
+      - -c
+      - |
+        pip install pytest pytest-cov pytest-console-scripts --root-user-action ignore
+        pytest --cov-report term-missing --cov=discordai  --cov-config=.coveragerc tests
+        # tail -f /dev/null

@@ -11,12 +11,14 @@ DiscordAI is a parent module of [DiscordAI Modelizer](https://github.com/A-Baji/
 - [x] Update OpenAI
 - [ ] Integrate Gemini
 - [ ] Integrate Meta AI
-- [ ] Add unit tests
+- [x] Add unit tests
 - [ ] Rewrite documentation
 - [x] ~~Improve model training method?~~
-- [ ] Refactor messy code
+- [x] Refactor messy code
 - [x] Rework dataset reduction
 - [x] Add `bot command list` command
+- [x] Add a `--force` flag for delete commands
+- [x] Return error if given user isnt found in chat logs
 
 ## Installation
 ### Executable

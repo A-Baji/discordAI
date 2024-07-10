@@ -53,8 +53,8 @@ def discordai():
             elif args.subsubcommand == "add":
                 template.gen_new_command(
                     args.model_id,
-                    args.openai_key,
                     args.command_name,
+                    args.openai_key,
                     args.temp_default,
                     args.pres_default,
                     args.freq_default,
@@ -63,16 +63,16 @@ def discordai():
                     args.bold_default,
                 )
             elif args.subsubcommand == "delete":
-                template.delete_command(args.command_name)
+                template.delete_command(args.command_name, args.force)
             else:
                 raise argparse.ArgumentError(
                     bot_subsubcommand,
-                    "Must choose a command from `add` or `delete`",
+                    "Must choose a command from `list`, `add`, or `delete`",
                 )
         else:
             raise argparse.ArgumentError(
                 bot_subcommand,
-                "Must choose a command from `start` or `commands`",
+                "Must choose a command from `start` or `command`",
             )
     elif args.command == "config":
         if args.subcommand == "update":
@@ -80,6 +80,9 @@ def discordai():
                 config[args.key] = args.value
                 configuration.save(config)
                 config = configuration.get()
+            else:
+                print("Invalid key provided!")
+                return
         print(f"{configuration.config_dir / 'config.json'}:")
         command_line.display(config)
 

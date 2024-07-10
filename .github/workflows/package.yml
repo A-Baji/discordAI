@@ -19,13 +19,25 @@ jobs:
           - '3.12'
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
     - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.py_ver }}
     - name: Install Package
       run: pip install .
     - name: Test Package
-      run: echo -e "none\nnone" | discordai -V
+      env:
+        PY_VER: ${{ matrix.py_ver }}
+        DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PYTHONUNBUFFERED: 1
+      run: |
+        touch .env.test
+        export VERSION=$(cat discordai/version.py | grep -oP '\d+\.\d+\.\d+')
+        docker compose -f docker-compose-test.yaml up --build --exit-code-from tests
   release:
     if: |
       github.event_name == 'push' &&
