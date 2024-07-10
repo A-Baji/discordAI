@@ -37,8 +37,7 @@ jobs:
       run: |
         touch .env.test
         export VERSION=$(cat discordai/version.py | grep -oP '\d+\.\d+\.\d+')
-        env
-        # docker compose -f docker-compose-test.yaml up --build --exit-code-from tests
+        docker compose -f docker-compose-test.yaml up --build --exit-code-from tests
   release:
     if: |
       github.event_name == 'push' &&
