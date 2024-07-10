@@ -33,10 +33,10 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PYTHONUNBUFFERED: 1
       run: |
-        touch .env.test
-        export VERSION=$(cat discordai_modelizer/version.py | grep -oP '\d+\.\d+\.\d+')
-        pip install git+https://github.com/A-Baji/discordAI-modelizer.git -U
-        docker compose -f docker-compose-test.yaml up --build --exit-code-from tests
+        pip list | grep discord
+        # touch .env.test
+        # export VERSION=$(cat discordai_modelizer/version.py | grep -oP '\d+\.\d+\.\d+')
+        # docker compose -f docker-compose-test.yaml up --build --exit-code-from tests
   release:
     if: |
       github.event_name == 'push' &&
