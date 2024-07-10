@@ -1,11 +1,40 @@
-from json import dumps
+import os
 import signal
 import subprocess
 import time
-from discordai_modelizer.tests import test_command_line
-from discordai_modelizer.tests.conftest import default_file_output
+import appdirs
+
+from pathlib import Path
+from json import dumps, loads
+from pytest import fixture
 from discordai.template import list_commands
-from tests.conftest import TEST_COG_PATH, TEST_COMMAND_NAME
+from discordai_modelizer.customize import create_model
+from .conftest import TEST_COG_PATH, TEST_COMMAND_NAME
+from . import expected_values
+
+
+CHANNEL_ID = os.environ["CHANNEL_ID"]
+USER = os.environ["USERNAME"]
+FILES_PATH = Path(appdirs.user_data_dir(appname="discordai"))
+FULL_LOGS_PATH = FILES_PATH / f"{CHANNEL_ID}_logs.json"
+FULL_DATASET_PATH = FILES_PATH / f"{CHANNEL_ID[:4]}_{USER}_data_set.jsonl"
+
+
+@fixture(scope="function")
+def default_file_output():
+    # Ensure a clean start by removing any existing files
+    if FULL_LOGS_PATH.exists():
+        FULL_LOGS_PATH.unlink()
+    if FULL_DATASET_PATH.exists():
+        FULL_DATASET_PATH.unlink()
+    # Generate log and dataset files
+    create_model(CHANNEL_ID, USER)
+    yield
+    # Cleanup after the tests in this module
+    if FULL_LOGS_PATH.exists():
+        FULL_LOGS_PATH.unlink()
+    if FULL_DATASET_PATH.exists():
+        FULL_DATASET_PATH.unlink()
 
 
 def test_cli_help(script_runner):
@@ -26,51 +55,113 @@ def test_cli_help(script_runner):
 
 
 def test_cli_model_list(script_runner, init_config):
-    test_command_line.test_cli_model_list(script_runner, "discordai")
+    cli = script_runner.run(["discordai", "model", "list"])
+    assert cli.success
+    for o in expected_values.list_module_expected:
+        assert o in loads(cli.stdout)
 
 
-def test_cli_training(script_runner, init_config, default_file_output):
-    test_command_line.test_cli_training(script_runner, "discordai", default_file_output)
+def test_cli_training(script_runner, default_file_output, init_config):
+    cli = script_runner.run(
+        [
+            "discordai",
+            "model",
+            "create",
+            "-c",
+            f"{CHANNEL_ID}",
+            "-u",
+            f"{USER}",
+            "-o",
+            "BAD_KEY",
+            "-b",
+            "babbage",
+        ]
+    )
+    assert not cli.success
+    assert "INFO: Starting OpenAI fine-tune job..." in cli.stdout
 
 
 def test_cli_model_list_full(script_runner, init_config):
-    test_command_line.test_cli_model_list_full(script_runner, "discordai")
+    cli = script_runner.run(["discordai", "model", "list", "--full"])
+    assert cli.success
+    for o in expected_values.list_module_expected_full:
+        assert o in loads(cli.stdout)
 
 
 def test_cli_delete_model(script_runner, init_config):
-    test_command_line.test_cli_delete_model(script_runner, "discordai")
+    cli = script_runner.run(["discordai", "model", "delete", "-m", "whisper-1"])
+    assert (
+        "Are you sure you want to delete this model? This action is not reversable. Y/N: "
+        in cli.stdout
+    )
 
 
 def test_cli_job_list(script_runner, init_config):
-    test_command_line.test_cli_job_list(script_runner, "discordai")
+    cli = script_runner.run(["discordai", "job", "list"])
+    assert cli.success
+    assert dumps(expected_values.list_job_expected, indent=4) in cli.stdout
 
 
 def test_job_list_full(script_runner, init_config):
-    test_command_line.test_job_list_full(script_runner, "discordai")
+    cli = script_runner.run(["discordai", "job", "list", "--full"])
+    assert cli.success
+    assert dumps(expected_values.list_job_expected_full, indent=4) in cli.stdout
 
 
 def test_job_info(script_runner, init_config):
-    test_command_line.test_job_info(script_runner, "discordai")
+    cli = script_runner.run(
+        ["discordai", "job", "info", "-j", "ftjob-i2IyeV2xbLCSrYq45kTKSdwE"]
+    )
+    assert cli.success
+    assert dumps(expected_values.job_info_expected, indent=4) in cli.stdout
 
 
 def test_job_events(script_runner, init_config):
-    test_command_line.test_job_events(script_runner, "discordai")
+    cli = script_runner.run(
+        ["discordai", "job", "events", "-j", "ftjob-i2IyeV2xbLCSrYq45kTKSdwE"]
+    )
+    assert cli.success
+    assert dumps(expected_values.job_events_expected, indent=4) in cli.stdout
 
 
 def test_job_cancel(script_runner, init_config):
-    test_command_line.test_job_cancel(script_runner, "discordai")
+    cli = script_runner.run(
+        ["discordai", "job", "cancel", "-j", "ftjob-i2IyeV2xbLCSrYq45kTKSdwE"]
+    )
+    assert cli.success
+    assert dumps(expected_values.job_cancel_expected, indent=4) in cli.stdout
 
 
 def test_job_cancel(script_runner, init_config):
-    test_command_line.test_job_cancel(script_runner, "discordai")
+    cli = script_runner.run(
+        ["discordai", "job", "cancel", "-j", "ftjob-i2IyeV2xbLCSrYq45kTKSdwE"]
+    )
+    assert cli.success
+    assert dumps(expected_values.job_cancel_expected, indent=4) in cli.stdout
 
 
 def test_cli_model_bad_args(script_runner, init_config):
-    test_command_line.test_cli_model_bad_args(script_runner, "discordai")
+    cli = script_runner.run(
+        [
+            "discordai",
+            "model",
+        ]
+    )
+    assert not cli.success
+    assert "Must choose a command from `list`, `create`, or `delete`" in cli.stderr
 
 
 def test_cli_job_bad_args(script_runner, init_config):
-    test_command_line.test_cli_job_bad_args(script_runner, "discordai")
+    cli = script_runner.run(
+        [
+            "discordai",
+            "job",
+        ]
+    )
+    assert not cli.success
+    assert (
+        "Must choose a command from `list`, `info`, `events`, or `cancel`" in cli.stderr
+    )
 
 
 def test_cli_bot_start(script_runner, init_config):
