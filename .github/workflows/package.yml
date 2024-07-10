@@ -36,7 +36,7 @@ jobs:
         PYTHONUNBUFFERED: 1
       run: |
         touch .env.test
-        export VERSION=$(cat discordai_modelizer/version.py | grep -oP '\d+\.\d+\.\d+')
+        export VERSION=$(cat discordai/version.py | grep -oP '\d+\.\d+\.\d+')
         docker compose -f docker-compose-test.yaml up --build --exit-code-from tests
   release:
     if: |
