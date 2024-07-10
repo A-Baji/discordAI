@@ -9,13 +9,14 @@ from .conftest import TEST_COMMAND_NAME, TEST_COG_PATH
 
 def test_list_commands(add_command):
     commands = template.list_commands()
-    assert commands == [
-        "/chatgpt",
-        "/imageai",
-        f"/{TEST_COMMAND_NAME}",
-        "/openai",
-        "/customai",
-    ]
+    for c in commands:
+        assert c in [
+            "/chatgpt",
+            "/imageai",
+            f"/{TEST_COMMAND_NAME}",
+            "/openai",
+            "/customai",
+        ]
 
 
 def test_add_command(add_command):

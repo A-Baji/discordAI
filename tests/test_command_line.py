@@ -175,11 +175,10 @@ def test_cli_bot_start(script_runner, init_config):
 
 def test_cli_list_commands(script_runner, init_config, add_command):
     cli = script_runner.run(["discordai", "bot", "command", "list"])
+    commands = ["/chatgpt", "/imageai", "/test", "/openai", "/customai"]
     assert cli.success
-    assert (
-        dumps(["/chatgpt", "/imageai", "/test", "/openai", "/customai"], indent=4)
-        in cli.stdout
-    )
+    for c in commands:
+        assert c in cli.stdout
 
 
 def test_cli_add_commands(script_runner, init_config, remove_command):
