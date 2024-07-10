@@ -8,7 +8,6 @@ from pathlib import Path
 from json import dumps, loads
 from pytest import fixture
 from discordai.template import list_commands
-from discordai_modelizer.customize import create_model
 from .conftest import TEST_COG_PATH, TEST_COMMAND_NAME
 from . import expected_values
 
@@ -21,16 +20,12 @@ FULL_DATASET_PATH = FILES_PATH / f"{CHANNEL_ID[:4]}_{USER}_data_set.jsonl"
 
 
 @fixture(scope="function")
-def default_file_output():
-    # Ensure a clean start by removing any existing files
+def clean_file_output():
     if FULL_LOGS_PATH.exists():
         FULL_LOGS_PATH.unlink()
     if FULL_DATASET_PATH.exists():
         FULL_DATASET_PATH.unlink()
-    # Generate log and dataset files
-    create_model(CHANNEL_ID, USER)
     yield
-    # Cleanup after the tests in this module
     if FULL_LOGS_PATH.exists():
         FULL_LOGS_PATH.unlink()
     if FULL_DATASET_PATH.exists():
@@ -61,7 +56,7 @@ def test_cli_model_list(script_runner, init_config):
         assert o in loads(cli.stdout)
 
 
-def test_cli_training(script_runner, default_file_output, init_config):
+def test_cli_training(script_runner, clean_file_output, init_config):
     cli = script_runner.run(
         [
             "discordai",
