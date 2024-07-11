@@ -59,7 +59,7 @@ class {class_name}(commands.Cog, name="{command_name}"):
         try:
             response = client.completions.create(
                 model="{model_id}",
-                prompt=prompt,
+                prompt=f"{username} says: {{prompt}}",
                 temperature=temp,
                 frequency_penalty=presence_penalty,
                 presence_penalty=frequency_penalty,
@@ -131,12 +131,14 @@ def gen_new_command(
     bold_default: bool = False,
 ):
     cogs_path = get_cogs_path()
+    username = model_id.split(":")[3].split("-")[0]
     with open(pathlib.Path(cogs_path, f"{command_name}.py"), "w") as f:
         cogs_path.mkdir(exist_ok=True)
         f.write(
             template.format(
                 model_id=model_id,
                 openai_key=openai_key,
+                username=username,
                 command_name=command_name,
                 temp_default=float(temp_default),
                 pres_default=float(pres_default),
