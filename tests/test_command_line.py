@@ -16,7 +16,7 @@ CHANNEL_ID = os.environ["CHANNEL_ID"]
 USER = os.environ["USERNAME"]
 FILES_PATH = Path(appdirs.user_data_dir(appname="discordai"))
 FULL_LOGS_PATH = FILES_PATH / f"{CHANNEL_ID}_logs.json"
-FULL_DATASET_PATH = FILES_PATH / f"{CHANNEL_ID[:4]}_{USER}_data_set.jsonl"
+FULL_DATASET_PATH = FILES_PATH / f"{USER[:13]}_{CHANNEL_ID[:4]}_data_set.jsonl"
 
 
 @fixture(scope="function")

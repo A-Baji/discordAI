@@ -131,7 +131,10 @@ def gen_new_command(
     bold_default: bool = False,
 ):
     cogs_path = get_cogs_path()
-    username = model_id.split(":")[3].split("-")[0]
+    try:
+        username = model_id.split(":")[3].split("-")[0]
+    except IndexError:
+        username = "bot"
     with open(pathlib.Path(cogs_path, f"{command_name}.py"), "w") as f:
         cogs_path.mkdir(exist_ok=True)
         f.write(
