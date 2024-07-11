@@ -2,6 +2,30 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [3.0.0] - 07-xx-2024
+
+### Added
+
+- support for python 3.12
+- unit tests
+
+### Changed
+
+- updated modelizer to version [3.0.7](https://github.com/A-Baji/discordAI-modelizer/releases/tag/3.0.7)
+- updated and pinned openai to version 1.35.5
+  -  includes various updates to the included slash commands 
+- updated DiscordChatExporter to version 2.43.3
+- refactor/optimization/general cleanup of code
+- improved dev environment
+- updated some cli args
+- updated some cli help strings
+- updated config handling
+
+### Removed
+
+- support for python 3.8
+- token usage tracking for /chatgpt command
+
 ## [2.0.1] - 06-15-2023
 
 ### Changed
@@ -82,6 +106,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 - modified readme
 
+[3.0.0]: https://github.com/A-Baji/discordAI/compare/2.0.1...3.0.0
 [2.0.1]: https://github.com/A-Baji/discordAI/compare/1.3.2...2.0.1
 [2.0.0]: https://github.com/A-Baji/discordAI/compare/1.3.2...2.0.0
 [1.3.2]: https://github.com/A-Baji/discordAI/compare/1.3.1...1.3.2
