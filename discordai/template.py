@@ -107,10 +107,10 @@ def get_cogs_path(update_cogs=False):
         # The code is being run as a frozen executable
         data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
         cogs_path = data_dir / "discordai" / "bot" / "cogs"
+        og_data_dir = pathlib.Path(sys._MEIPASS)
+        og_cogs_path = og_data_dir / "discordai" / "bot" / "cogs"
         if not cogs_path.exists():
             # Copy files from the bundled location to the user data directory
-            data_dir = pathlib.Path(sys._MEIPASS)
-            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
             shutil.copytree(og_cogs_path, cogs_path, dirs_exist_ok=True)
         elif update_cogs:
             # Recopy the cogs in case of updates
