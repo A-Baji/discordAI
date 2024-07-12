@@ -5,7 +5,7 @@ from discordai_modelizer.command_line.subparsers import (
 
 
 def setup_bot_start(bot_subcommand):
-    bot_cmd_start = bot_subcommand.add_parser("start", help="Start your discord bot")
+    bot_cmd_start = bot_subcommand.add_parser("start", help="Start your Discord bot")
     bot_cmd_required_named = bot_cmd_start.add_argument_group(
         "required named arguments"
     )

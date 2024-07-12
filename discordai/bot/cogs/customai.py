@@ -1,7 +1,7 @@
 """"
 Copyright © Krypton 2019-2022 - https://github.com/kkrypt0nn (https://krypton.ninja)
 Description:
-🐍 A simple template to start to code your own and personalized discord bot in Python programming language.
+🐍 A simple template to start to code your own and personalized Discord bot in Python programming language.
 
 Version: 5.4.1
 """
@@ -42,12 +42,16 @@ class CustomAI(commands.Cog, name="customai"):
         stop: bool = False,
         openai_key: str = "",
     ):
+        try:
+            username = model.split(":")[3].split("-")[0]
+        except IndexError:
+            username = "bot"
         client = OpenAI(api_key=openai_key or self.bot.OPENAI_API_KEY)
         await context.defer()
         try:
             response = client.completions.create(
                 model=model,
-                prompt=prompt,
+                prompt=f"{username} says: {prompt}",
                 temperature=temp,
                 frequency_penalty=presence_penalty,
                 presence_penalty=frequency_penalty,

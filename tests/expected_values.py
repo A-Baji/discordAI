@@ -23,8 +23,8 @@ list_module_expected = [
     {"id": "gpt-3.5-turbo", "created": "2023-02-28 18:56:42"},
     {"id": "gpt-3.5-turbo-instruct", "created": "2023-08-24 18:23:47"},
     {"id": "gpt-3.5-turbo-instruct-0914", "created": "2023-09-07 21:34:32"},
-    {"id": "text-embedding-ada-002", "created": "2022-12-16 19:01:39"},
     {"id": "gpt-4o", "created": "2024-05-10 18:50:49"},
+    {"id": "text-embedding-ada-002", "created": "2022-12-16 19:01:39"},
     {"id": "davinci-002", "created": "2023-08-21 16:11:41"},
     {
         "id": "davinci:ft-personal:jason-9582-2022-12-23-05-45-51",
@@ -194,6 +194,18 @@ list_module_expected = [
         "id": "ft:davinci-002:personal:1663-wardellstephe:9jgCpXW5",
         "created": "2024-07-11 05:00:27",
     },
+    {
+        "id": "ft:davinci-002:personal:wardellstephe-1663:9jxGWoJw:ckpt-step-769",
+        "created": "2024-07-11 23:13:25",
+    },
+    {
+        "id": "ft:davinci-002:personal:wardellstephe-1663:9jxGXXBT:ckpt-step-1538",
+        "created": "2024-07-11 23:13:25",
+    },
+    {
+        "id": "ft:davinci-002:personal:wardellstephe-1663:9jxGX7BS",
+        "created": "2024-07-11 23:13:25",
+    },
 ]
 
 list_module_expected_full = [
@@ -342,16 +354,16 @@ list_module_expected_full = [
         "owned_by": "system",
     },
     {
-        "id": "text-embedding-ada-002",
-        "created": "2022-12-16 19:01:39",
-        "object": "model",
-        "owned_by": "openai-internal",
-    },
-    {
         "id": "gpt-4o",
         "created": "2024-05-10 18:50:49",
         "object": "model",
         "owned_by": "system",
+    },
+    {
+        "id": "text-embedding-ada-002",
+        "created": "2022-12-16 19:01:39",
+        "object": "model",
+        "owned_by": "openai-internal",
     },
     {
         "id": "davinci-002",
@@ -611,9 +623,34 @@ list_module_expected_full = [
         "object": "model",
         "owned_by": "user-ygljrfw1bneby79ndybpnodl",
     },
+    {
+        "id": "ft:davinci-002:personal:wardellstephe-1663:9jxGWoJw:ckpt-step-769",
+        "created": "2024-07-11 23:13:25",
+        "object": "model",
+        "owned_by": "user-ygljrfw1bneby79ndybpnodl",
+    },
+    {
+        "id": "ft:davinci-002:personal:wardellstephe-1663:9jxGXXBT:ckpt-step-1538",
+        "created": "2024-07-11 23:13:25",
+        "object": "model",
+        "owned_by": "user-ygljrfw1bneby79ndybpnodl",
+    },
+    {
+        "id": "ft:davinci-002:personal:wardellstephe-1663:9jxGX7BS",
+        "created": "2024-07-11 23:13:25",
+        "object": "model",
+        "owned_by": "user-ygljrfw1bneby79ndybpnodl",
+    },
 ]
 
 list_job_expected = [
+    {
+        "id": "ftjob-6DFW30DOSQAZaVQ4n3fZ9U4w",
+        "model": "davinci-002",
+        "status": "succeeded",
+        "created_at": "2024-07-11 23:01:08",
+        "finished_at": "2024-07-11 23:13:23",
+    },
     {
         "id": "ftjob-PJ6OUUoontOdeUlGmNDBvnfx",
         "model": "davinci-002",
@@ -747,16 +784,33 @@ list_job_expected = [
         "created_at": "2024-06-23 22:46:25",
         "finished_at": "2024-06-23 22:49:44",
     },
-    {
-        "id": "ftjob-WMnwxBtBuJQgiX3ZRnuXlTF3",
-        "model": "gpt-3.5-turbo-0125",
-        "status": "succeeded",
-        "created_at": "2024-06-23 20:31:21",
-        "finished_at": "2024-06-23 21:16:09",
-    },
 ]
 
 list_job_expected_full = [
+    {
+        "id": "ftjob-6DFW30DOSQAZaVQ4n3fZ9U4w",
+        "created_at": "2024-07-11 23:01:08",
+        "error": {"code": None, "message": None, "param": None},
+        "fine_tuned_model": "ft:davinci-002:personal:wardellstephe-1663:9jxGX7BS",
+        "finished_at": "2024-07-11 23:13:23",
+        "hyperparameters": {
+            "n_epochs": 2,
+            "batch_size": 13,
+            "learning_rate_multiplier": 16,
+        },
+        "model": "davinci-002",
+        "object": "fine_tuning.job",
+        "organization_id": "org-UN3Y7fSoTFPVCWR6f4AMWsVf",
+        "result_files": ["file-dWjaHOWq5CWsJFUrAWJrZYH0"],
+        "seed": 706919378,
+        "status": "succeeded",
+        "trained_tokens": 348890,
+        "training_file": "file-9x6n6frPWT8mAx7BeuV0MNQM",
+        "validation_file": None,
+        "estimated_finish": None,
+        "integrations": [],
+        "user_provided_suffix": "wardellstephe_1663",
+    },
     {
         "id": "ftjob-PJ6OUUoontOdeUlGmNDBvnfx",
         "created_at": "2024-07-11 04:48:11",
@@ -1260,30 +1314,6 @@ list_job_expected_full = [
         "estimated_finish": None,
         "integrations": [],
         "user_provided_suffix": "1061_adibiswat",
-    },
-    {
-        "id": "ftjob-WMnwxBtBuJQgiX3ZRnuXlTF3",
-        "created_at": "2024-06-23 20:31:21",
-        "error": {"code": None, "message": None, "param": None},
-        "fine_tuned_model": "ft:gpt-3.5-turbo-0125:personal:1663-adibiswat:9dOrDhxp",
-        "finished_at": "2024-06-23 21:16:09",
-        "hyperparameters": {
-            "n_epochs": 3,
-            "batch_size": 1,
-            "learning_rate_multiplier": 2,
-        },
-        "model": "gpt-3.5-turbo-0125",
-        "object": "fine_tuning.job",
-        "organization_id": "org-UN3Y7fSoTFPVCWR6f4AMWsVf",
-        "result_files": ["file-8ya7wn36JZz6cc9tEy3diyE3"],
-        "seed": 1834725185,
-        "status": "succeeded",
-        "trained_tokens": 76449,
-        "training_file": "file-RhHsfdxIq0v1AnstxhULFSvO",
-        "validation_file": None,
-        "estimated_finish": None,
-        "integrations": [],
-        "user_provided_suffix": "1663_adibiswat",
     },
 ]
 
@@ -2159,4 +2189,28 @@ gen_dataset_max_5_distributed = [
     {"prompt": "adibiswat says:", "completion": " pretermined messages."},
     {"prompt": "adibiswat says:", "completion": " message."},
     {"prompt": "adibiswat says:", "completion": " message."},
+]
+
+gen_dataset_max_5_distributed_offset_2 = [
+    {"prompt": "adibiswat says:", "completion": " a."},
+    {"prompt": "adibiswat says:", "completion": " ai tests."},
+    {"prompt": "adibiswat says:", "completion": " pretermined messages."},
+    {"prompt": "adibiswat says:", "completion": " another."},
+    {"prompt": "adibiswat says:", "completion": " also."},
+]
+
+gen_dataset_max_5_distributed_reverse = [
+    {"prompt": "adibiswat says:", "completion": " the last message."},
+    {"prompt": "adibiswat says:", "completion": " message."},
+    {"prompt": "adibiswat says:", "completion": " message."},
+    {"prompt": "adibiswat says:", "completion": " pretermined messages."},
+    {"prompt": "adibiswat says:", "completion": " discord."},
+]
+
+gen_dataset_max_5_distributed_reverse_offset_2 = [
+    {"prompt": "adibiswat says:", "completion": " message."},
+    {"prompt": "adibiswat says:", "completion": " a."},
+    {"prompt": "adibiswat says:", "completion": " message."},
+    {"prompt": "adibiswat says:", "completion": " for the test data."},
+    {"prompt": "adibiswat says:", "completion": " i."},
 ]

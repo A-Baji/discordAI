@@ -1,7 +1,7 @@
 """"
 Copyright © Krypton 2019-2022 - https://github.com/kkrypt0nn (https://krypton.ninja)
 Description:
-🐍 A simple template to start to code your own and personalized discord bot in Python programming language.
+🐍 A simple template to start to code your own and personalized Discord bot in Python programming language.
 
 Version: 5.4.1
 """
@@ -34,7 +34,7 @@ class Sync(commands.Cog, name="sync"):
             embed = discord.Embed(
                 title="Slash Commands Sync",
                 description="Slash commands have been globally synchronized.",
-                color=0x9C84EF
+                color=0x9C84EF,
             )
             await context.send(embed=embed)
             return
@@ -44,14 +44,14 @@ class Sync(commands.Cog, name="sync"):
             embed = discord.Embed(
                 title="Slash Commands Sync",
                 description="Slash commands have been synchronized in this guild.",
-                color=0x9C84EF
+                color=0x9C84EF,
             )
             await context.send(embed=embed)
             return
         embed = discord.Embed(
             title="Invalid Scope",
             description="The scope must be `global` or `guild`.",
-            color=0xE02B2B
+            color=0xE02B2B,
         )
         await context.send(embed=embed)
 
@@ -59,7 +59,9 @@ class Sync(commands.Cog, name="sync"):
         name="unsync",
         description="Unsynchonizes the slash commands.",
     )
-    @app_commands.describe(scope="The scope of the sync. Can be `global`, `current_guild` or `guild`")
+    @app_commands.describe(
+        scope="The scope of the sync. Can be `global`, `current_guild` or `guild`"
+    )
     async def unsync(self, context: Context, scope: str) -> None:
         """
         Unsynchonizes the slash commands.
@@ -74,7 +76,7 @@ class Sync(commands.Cog, name="sync"):
             embed = discord.Embed(
                 title="Slash Commands Unsync",
                 description="Slash commands have been globally unsynchronized.",
-                color=0x9C84EF
+                color=0x9C84EF,
             )
             await context.send(embed=embed)
             return
@@ -84,14 +86,14 @@ class Sync(commands.Cog, name="sync"):
             embed = discord.Embed(
                 title="Slash Commands Unsync",
                 description="Slash commands have been unsynchronized in this guild.",
-                color=0x9C84EF
+                color=0x9C84EF,
             )
             await context.send(embed=embed)
             return
         embed = discord.Embed(
             title="Invalid Scope",
             description="The scope must be `global` or `guild`.",
-            color=0xE02B2B
+            color=0xE02B2B,
         )
         await context.send(embed=embed)
 
