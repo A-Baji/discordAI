@@ -11,9 +11,9 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 ### Changed
 
-- updated modelizer to version [3.0.7](https://github.com/A-Baji/discordAI-modelizer/releases/tag/3.0.7)
+- updated modelizer to version [3.0.8](https://github.com/A-Baji/discordAI-modelizer/releases/tag/3.0.8)
 - updated and pinned openai to version 1.35.5
-  -  includes various updates to the included slash commands 
+  -  includes various updates to the included slash commands
 - updated DiscordChatExporter to version 2.43.3
 - refactor/optimization/general cleanup of code
 - improved dev environment
