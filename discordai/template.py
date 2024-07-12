@@ -102,7 +102,7 @@ async def setup(bot):
 config_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
 
 
-def get_cogs_path():
+def get_cogs_path(update_cogs=False):
     if getattr(sys, "frozen", False):
         # The code is being run as a frozen executable
         data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
@@ -111,7 +111,12 @@ def get_cogs_path():
             # Copy files from the bundled location to the user data directory
             data_dir = pathlib.Path(sys._MEIPASS)
             og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-            shutil.copytree(og_cogs_path, cogs_path)
+            shutil.copytree(og_cogs_path, cogs_path, dirs_exist_ok=True)
+        elif update_cogs:
+            # Recopy the cogs in case of updates
+            for file in og_cogs_path.glob("*"):
+                dest_file = cogs_path / file.name
+                shutil.copy2(file, dest_file)
     else:
         # The code is being run normally
         template_dir = pathlib.Path(os.path.dirname(__file__))

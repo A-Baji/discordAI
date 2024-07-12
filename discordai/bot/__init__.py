@@ -132,7 +132,7 @@ def start_bot(discord_token: str, openai_key: str, sync=False):
         """
         The code in this function is executed whenever the bot will start.
         """
-        cogs_path = get_cogs_path()
+        cogs_path = get_cogs_path(update_cogs=True)
         if getattr(sys, "frozen", False):
             # The code is being run as a frozen executable
             for file in cogs_path.glob("*.py"):
