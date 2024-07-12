@@ -11,7 +11,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 ### Changed
 
-- updated modelizer to version [3.0.8](https://github.com/A-Baji/discordAI-modelizer/releases/tag/3.0.8)
+- updated modelizer to version [3.0.9](https://github.com/A-Baji/discordAI-modelizer/releases/tag/3.0.9)
 - updated and pinned openai to version 1.35.5
   -  includes various updates to the included slash commands
 - updated DiscordChatExporter to version 2.43.3
@@ -38,7 +38,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 ### Added
 
 - a changelog
-- an openAI image generation command
+- an OpenAI image generation command
 - the gpt3.5 model to the openai command and made it the default
 - a chatGPT command with chat history functionality
 - custom emoji support for custom models.
@@ -50,7 +50,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 ### Changed
 
-- made prompt bolding for custom model completions a discord command parameter
+- made prompt bolding for custom model completions a Discord command parameter
 - updated modelizer to version [2.0.0](https://github.com/A-Baji/discordAI-modelizer/releases/tag/2.0.0)
 
 ## [1.3.2] - 02-22-2023
