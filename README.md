@@ -83,7 +83,7 @@ The options after `-c` and `-m` are to set the *defaults* when using the slash c
 
 Slash commands can be updated at any time by calling `discordai bot command add` with the same <command_name> and the new desired default values. You can also delete slash commands with `discordai bot command delete -c <command_name>`.
 
-After creating a new slash command, remember to sync your slash commands with Discord's servers by running `discordai bot start --sync`, or by using `@<your_bot> sync global` in Discord. See the [commands description](https://github.com/A-Baji/discordAI?tab=readme-ov-file#your_bot-syncunsyc-guildglobal) for more about syncing your bot.
+After creating a new slash command, remember to sync your slash commands with Discord's servers by running `discordai bot start --sync`, or by using `@<your_bot> sync global` in Discord. See the [commands description](https://github.com/A-Baji/discordAI?tab=readme-ov-file#your_bot-syncunsync-guildglobal) for more about syncing your bot.
 
 ### Questions
 If you have any questions, feel free to make a new post in [discussions](https://github.com/A-Baji/DiscordAI/discussions/categories/q-a). If you encounter any issues while using DiscordAI, make sure to create a new [issue](https://github.com/A-Baji/DiscordAI/issues).
