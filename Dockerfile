@@ -1,7 +1,6 @@
-FROM python:3.11-alpine
+ARG PY_VER
+FROM python:${PY_VER}
 WORKDIR /main
-RUN apk update
-RUN apk add git
 COPY ./requirements.txt ./setup.py ./README.md /main/
 COPY ./discordai /main/discordai
 RUN pip3 install --upgrade pip

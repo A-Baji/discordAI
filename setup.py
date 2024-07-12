@@ -3,7 +3,7 @@ import pathlib
 import discordai as package
 import sys
 
-min_py_version = (3, 8)
+min_py_version = (3, 9)
 
 if sys.version_info < min_py_version:
     sys.exit(
@@ -18,7 +18,7 @@ setuptools.setup(
     name=package.__name__,
     version=package.__version__,
     author_email="bidabaji@gmail.com",
-    description="A discord bot package that utilizes openAI to create custom AI models out of your chat history",
+    description="A Discord bot driver package that utilizes OpenAI to create custom AI models out of your Discord chat history",
     long_description=pathlib.Path("README.md").read_text(),
     long_description_content_type="text/markdown",
     url="https://github.com/A-Baji/discordAI",
@@ -30,7 +30,7 @@ setuptools.setup(
     ],
     entry_points={
         "console_scripts": [
-            f"{package.__name__}={package.__name__}.command_line:{package.__name__}"
+            f"{package.__name__}={package.__name__}.command_line.command_line:{package.__name__}"
         ],
     },
     include_package_data=True,

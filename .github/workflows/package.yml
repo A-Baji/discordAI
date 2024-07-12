@@ -13,19 +13,31 @@ jobs:
       fail-fast: false
       matrix:
         py_ver:
-          - '3.8'
           - '3.9'
           - '3.10'
           - '3.11'
+          - '3.12'
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
     - uses: actions/setup-python@v4
       with:
-        python-version: ${{matrix.py_ver}}
+        python-version: ${{ matrix.py_ver }}
     - name: Install Package
       run: pip install .
     - name: Test Package
-      run: echo -e "none\nnone" | discordai -V
+      env:
+        PY_VER: ${{ matrix.py_ver }}
+        DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PYTHONUNBUFFERED: 1
+      run: |
+        touch .env.test
+        export VERSION=$(cat discordai/version.py | grep -oP '\d+\.\d+\.\d+')
+        docker compose -f docker-compose-test.yaml up --build --exit-code-from tests
   release:
     if: |
       github.event_name == 'push' &&
@@ -41,11 +53,11 @@ jobs:
       - name: Create release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{steps.version.outputs.discordai_version}}
-          release_name: Release ${{steps.version.outputs.discordai_version}}
-          body: Release ${{steps.version.outputs.discordai_version}}
+          tag_name: ${{ steps.version.outputs.discordai_version }}
+          release_name: Release ${{ steps.version.outputs.discordai_version }}
+          body: Release ${{ steps.version.outputs.discordai_version }}
           draft: false
           prerelease: false
   package:
@@ -62,25 +74,25 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: '3.12'
     - name: Install Dependencies
-      run: pip install . pyinstaller==5.7
+      run: pip install . pyinstaller
     # Package
     - name: Windows CLI Package
-      if: ${{matrix.os == 'windows-latest'}}
+      if: ${{ matrix.os == 'windows-latest' }}
       run: |
-        pyinstaller discordai/command_line.py --console --onefile --name=discordai --add-binary='discordai/bot/cogs;discordai/bot/cogs' --hidden-import=openai --hidden-import=tiktoken --collect-data=discordai_modelizer
+        pyinstaller discordai/command_line/command_line.py --console --onefile --name=discordai --add-binary='discordai/bot/cogs;discordai/bot/cogs' --hidden-import=openai --collect-data=discordai_modelizer
         Compress-Archive -Path dist\*discordai* -DestinationPath discordai-windows.zip
     - name: Mac CLI Package
-      if: ${{matrix.os == 'macos-latest'}}
+      if: ${{ matrix.os == 'macos-latest' }}
       run: |
-        pyinstaller discordai/command_line.py --console --onefile --name=discordai --add-data='discordai/bot/cogs:discordai/bot/cogs' --hidden-import=openai --hidden-import=tiktoken --hidden-import=configparser --collect-data=discordai_modelizer --collect-data=aiohttp --collect-data=certifi
+        pyinstaller discordai/command_line/command_line.py --console --onefile --name=discordai --add-data='discordai/bot/cogs:discordai/bot/cogs' --hidden-import=openai --hidden-import=configparser --collect-data=discordai_modelizer --collect-data=aiohttp --collect-data=certifi
         zip -j discordai-macos.zip dist/*discordai*
         chmod +x dist/*discordai*
     - name: Linux CLI Package
-      if: ${{matrix.os == 'ubuntu-latest'}}
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
-        pyinstaller discordai/command_line.py --console --onefile --name=discordai --add-binary='discordai/bot/cogs:discordai/bot/cogs' --hidden-import=openai --hidden-import=tiktoken --collect-data=discordai_modelizer
+        pyinstaller discordai/command_line/command_line.py --console --onefile --name=discordai --add-binary='discordai/bot/cogs:discordai/bot/cogs' --hidden-import=openai --collect-data=discordai_modelizer
         zip -j discordai-linux.zip dist/*discordai*
         chmod +x dist/*discordai*
     # Upload

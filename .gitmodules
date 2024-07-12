@@ -1,0 +1,4 @@
+[submodule "discordAI-modelizer"]
+	path = discordAI-modelizer
+	url = https://github.com/A-Baji/discordAI-modelizer.git
+	branch = dev

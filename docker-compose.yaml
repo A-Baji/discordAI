@@ -1,21 +1,36 @@
-# VERSION=$(cat discordai/version.py | grep -oP '\d+\.\d+\.\d+') docker compose up --build
-version: '2.4'
+# PY_VER=3.12 VERSION=$(cat discordai/version.py | grep -oP '\d+\.\d+\.\d+') docker compose up --build
+# docker exec -it discordai-app-1 bash
+# discordai model list --full
+# discordai model create -c $CHANNEL_ID -u "$USERNAME"
+# discordai model delete -m ""
+# discordai job list --full
+# discordai job info -j ftjob-SDOuDLTs6a7xu9LMzdhJKo9w --events
+# discordai job cancel -j ftjob-SDOuDLTs6a7xu9LMzdhJKo9w
 services:
   app:
-    build: .
-    image: discord-ai/discordai:${VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PY_VER
+    image: discord-ai/discordai:py${PY_VER}-v${VERSION}
     working_dir: /main
     environment:
-      - DISCORD_TOKEN
-      - OPENAI_KEY
+      - DISCORD_BOT_TOKEN
+      - OPENAI_API_KEY
+      - CHANNEL_ID
+      - USERNAME
       - PYTHONUNBUFFERED=1
-    env_file: ./.env
+    env_file: .env
     volumes:
-      - ./discordai:/usr/local/lib/python3.11/site-packages/discordai
+      - ./discordai:/usr/local/lib/python${PY_VER}/site-packages/discordai
+      - ./discordAI-modelizer/discordai_modelizer:/usr/local/lib/python${PY_VER}/site-packages/discordai_modelizer
       - ./init.sh:/main/init.sh
+      - ./files/:/root/.local/share/discordai/
     command:
       - sh
       - -c
       - |
-        ./init.sh
-        discordai bot start
+        # ./init.sh
+        # discordai bot start
+        tail -f /dev/null

@@ -8,26 +8,18 @@ import appdirs
 template = """from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context
+from openai import OpenAI
 
-import openai
 import re
 
+
 def replace_emoji(emoji_name: str, emoji_map):
-    if emoji_name in emoji_map:
-        if emoji_map[emoji_name][1]:
-            return f"<a:{{emoji_name}}:{{emoji_map[emoji_name][0]}}>"
-        else:
-            return f"<:{{emoji_name}}:{{emoji_map[emoji_name][0]}}>"
-    elif emoji_name.upper() in emoji_map:
-        if emoji_map[emoji_name.upper()][1]:
-            return f"<a:{{emoji_name.upper()}}:{{emoji_map[emoji_name.upper()][0]}}>"
-        else:
-            return f"<:{{emoji_name.upper()}}:{{emoji_map[emoji_name.upper()][0]}}>"
-    elif emoji_name.lower() in emoji_map:
-        if emoji_map[emoji_name.lower()][1]:
-            return f"<a:{{emoji_name.lower()}}:{{emoji_map[emoji_name.lower()][0]}}>"
-        else:
-            return f"<:{{emoji_name.lower()}}:{{emoji_map[emoji_name.lower()][0]}}>"
+    emoji = emoji_name.lower()
+    emoji_id = emoji_map[emoji]["id"]
+    emoji_name = emoji_map[emoji]["name"]
+    is_animated = emoji_map[emoji]["is_animated"]
+    if emoji in emoji_map:
+        return f"<{{'a' if is_animated else ''}}:{{emoji_name}}:{{emoji_id}}>"
     else:
         return f":{{emoji_name}}:"
 
@@ -41,41 +33,66 @@ class {class_name}(commands.Cog, name="{command_name}"):
         description="Generate a completion for {command_name}",
     )
     @app_commands.describe(
-        prompt="The prompt to pass to your model: Default=\\"\\"",
-        temp="What sampling temperature to use. Higher values means more risks: Min=0 Max=1 Default={temp_default}",
-        presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2 Max=2 Default={pres_default}",
-        frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2 Max=2 Default={freq_default}",
-        max_tokens="The max number of tokens to generate. Each token costs credits: Default={max_tokens_default}",
+        prompt='The prompt to pass in: Default=\\"\\"',
+        temp="Number between 0.0 and 2.0. Higher values means more risks: Min=0.0 Max=2.0 Default={temp_default}",
+        presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2.0 Max=2.0 Default={pres_default}",
+        frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2.0 Max=2.0 Default={freq_default}",
+        max_tokens="The max number of tokens allowed to be generated. Completion cost scales with token count: Default={max_tokens_default}",
         stop="Whether to stop after the first sentence: Default={stop_default}",
-        bold="Whether to bolden the original prompt: Default={bold_default}")
-    async def {command_name}(self, context: Context, prompt: str = "", temp: float = {temp_default},
-                       presence_penalty: float = {pres_default}, frequency_penalty: float = {freq_default}, max_tokens: int = {max_tokens_default},
-                       stop: bool = {stop_default}, bold: bool = {bold_default}):
-        temp = min(max(temp, 0), 1)
-        presPen = min(max(presence_penalty, -2), 2)
-        freqPen = min(max(frequency_penalty, -2), 2)
-
+        bold="Whether to bolden the original prompt: Default={bold_default}",
+    )
+    async def {command_name}(
+        self,
+        context: Context,
+        prompt: str = "",
+        temp: float = {temp_default},
+        presence_penalty: float = {pres_default},
+        frequency_penalty: float = {freq_default},
+        max_tokens: int = {max_tokens_default},
+        stop: bool = {stop_default},
+        bold: bool = {bold_default},
+    ):
+        client = OpenAI(
+            api_key="{openai_key}"
+        )
         await context.defer()
         try:
-            openai.api_key = "{openai_key}"
-            response = openai.Completion.create(
-                engine="{model_id}",
-                prompt=prompt,
+            response = client.completions.create(
+                model="{model_id}",
+                prompt=f"{username} says: {{prompt}}",
                 temperature=temp,
-                frequency_penalty=presPen,
-                presence_penalty=freqPen,
+                frequency_penalty=presence_penalty,
+                presence_penalty=frequency_penalty,
                 max_tokens=max_tokens,
                 echo=False,
-                stop='.' if stop else None,
+                stop="." if stop else None,
             )
-            emojied_response = re.sub(r":(\w+):", lambda match: replace_emoji(
-                match.group(1), context.bot.emoji_map), f"{{'**' if bold and prompt else ''}}{{prompt}}{{'**' if bold and prompt else ''}}{{response[\'choices\'][0][\'text\']}}")
+            prompt = f"**{{prompt}}**" if bold else prompt
+            emojied_response = re.sub(
+                r":(\\w+):",
+                lambda match: replace_emoji(match.group(1), context.bot.emoji_map),
+                f"{{prompt}}{{response.choices[0].text}}",
+            )
             await context.send(emojied_response[:2000])
         except Exception as error:
-            print({error})
-            await context.send(
+            params = dict(
+                prompt=prompt,
+                temp=temp,
+                presence_penalty=presence_penalty,
+                frequency_penalty=frequency_penalty,
+                max_tokens=max_tokens,
+                stop=stop,
+                bold=bold,
+            )
+            print(
                 {error}
             )
+            await context.send(
+                {error}[
+                    :2000
+                ]
+            )
+        client.close()
 
 
 async def setup(bot):
@@ -85,52 +102,91 @@ async def setup(bot):
 config_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
 
 
-def gen_new_command(model_id: str, command_name: str, temp_default: float, pres_default: float, freq_default: float,
-                    max_tokens_default: int, stop_default: bool, openai_key: str, bold_default: bool):
-    if getattr(sys, 'frozen', False):
+def get_cogs_path(update_cogs=False):
+    if getattr(sys, "frozen", False):
         # The code is being run as a frozen executable
         data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
         cogs_path = data_dir / "discordai" / "bot" / "cogs"
-        if not os.path.exists(cogs_path):
-            data_dir = pathlib.Path(sys._MEIPASS)
-            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-            shutil.copytree(og_cogs_path, cogs_path)
-    else:
-        # The code is being run normally
-        template_dir = pathlib.Path(os.path.dirname(__file__))
-        cogs_path = template_dir / "bot"/ "cogs"
-    with open(pathlib.Path(cogs_path, f"{command_name}.py"), "w") as f:
-        os.makedirs(cogs_path, exist_ok=True)
-        f.write(
-            template.format(
-                model_id=model_id, class_name=command_name.capitalize(),
-                command_name=command_name, temp_default=float(temp_default),
-                pres_default=float(pres_default),
-                freq_default=float(freq_default),
-                max_tokens_default=max_tokens_default, stop_default=stop_default, openai_key=openai_key, bold_default = bold_default,
-                error="f\"Failed to generate valid response for prompt: {prompt}\\nError: {error}\""))
-        print(f"Successfully created new slash command: /{command_name} using model {model_id}")
-
-
-def delete_command(command_name: str):
-    confirm = input("Are you sure you want to delete this command? This action is not reversable. Y/N: ")
-    if confirm not in ["Y", "y", "yes", "Yes", "YES"]:
-        print("Cancelling command deletion...")
-        return
-    if getattr(sys, 'frozen', False):
-        # The code is being run as a frozen executable
-        data_dir = pathlib.Path(appdirs.user_data_dir(appname="discordai"))
-        cogs_path = data_dir / "discordai" / "bot" / "cogs"
-        if not os.path.exists(cogs_path):
-            data_dir = pathlib.Path(sys._MEIPASS)
-            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-            shutil.copytree(og_cogs_path, cogs_path)
+        og_data_dir = pathlib.Path(sys._MEIPASS)
+        og_cogs_path = og_data_dir / "discordai" / "bot" / "cogs"
+        if not cogs_path.exists():
+            # Copy files from the bundled location to the user data directory
+            shutil.copytree(og_cogs_path, cogs_path, dirs_exist_ok=True)
+        elif update_cogs:
+            # Recopy the cogs in case of updates
+            for file in og_cogs_path.glob("*"):
+                dest_file = cogs_path / file.name
+                shutil.copy2(file, dest_file)
     else:
         # The code is being run normally
         template_dir = pathlib.Path(os.path.dirname(__file__))
         cogs_path = template_dir / "bot" / "cogs"
+    return cogs_path
+
+
+def gen_new_command(
+    model_id: str,
+    command_name: str,
+    openai_key: str = os.getenv("OPENAI_API_KEY"),
+    temp_default: float = 1.0,
+    pres_default: float = 0.0,
+    freq_default: float = 0.0,
+    max_tokens_default: int = 125,
+    stop_default: bool = False,
+    bold_default: bool = False,
+):
+    cogs_path = get_cogs_path()
     try:
-        os.remove(pathlib.Path(cogs_path, f"{command_name}.py"))
+        username = model_id.split(":")[3].split("-")[0]
+    except IndexError:
+        username = "bot"
+    with open(pathlib.Path(cogs_path, f"{command_name}.py"), "w") as f:
+        cogs_path.mkdir(exist_ok=True)
+        f.write(
+            template.format(
+                model_id=model_id,
+                openai_key=openai_key,
+                username=username,
+                command_name=command_name,
+                temp_default=float(temp_default),
+                pres_default=float(pres_default),
+                freq_default=float(freq_default),
+                max_tokens_default=max_tokens_default,
+                stop_default=stop_default,
+                bold_default=bold_default,
+                class_name=command_name.capitalize(),
+                error='f"Failed to generate valid response with parameters: {params}\\nError: {error}"',
+            )
+        )
+        print(
+            f"Successfully created new slash command: /{command_name} using model {model_id}"
+        )
+
+
+def delete_command(command_name: str, force=False):
+    confirm = (
+        "yes"
+        if force
+        else input(
+            "Are you sure you want to delete this command? This action is not reversable. Y/N: "
+        )
+    )
+    if confirm.lower() not in ["y", "yes"]:
+        print("Cancelling command deletion...")
+        return
+    cogs_path = get_cogs_path()
+    cmd_file = pathlib.Path(cogs_path, f"{command_name}.py")
+    if cmd_file.exists():
+        cmd_file.unlink()
         print(f"Successfully deleted command: /{command_name}")
-    except FileNotFoundError:
+    else:
         print("Failed to delete command: No command with that name was found.")
+
+
+def list_commands():
+    cogs_path = get_cogs_path()
+    return [
+        f"/{file.stem}"
+        for file in cogs_path.glob("*.py")
+        if file.stem not in ["__init__", "sync"]
+    ]

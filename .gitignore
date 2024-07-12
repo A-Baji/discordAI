@@ -7,6 +7,7 @@ discordai/bot/cogs/*.py
 !discordai/bot/cogs/chatgpt.py
 !discordai/bot/cogs/sync.py
 init.sh
+/files/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -115,6 +116,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+/*.env*
 .env
 .venv
 env/

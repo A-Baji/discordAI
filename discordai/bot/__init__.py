@@ -1,33 +1,33 @@
 """
 Copyright © Krypton 2019-2022 - https://github.com/kkrypt0nn (https://krypton.ninja)
 Description:
-🐍 A simple template to start to code your own and personalized discord bot in Python programming language.
+🐍 A simple template to start to code your own and personalized Discord bot in Python programming language.
 
 Version: 5.4.1
 """
 
 import asyncio
 import os
-import pathlib
 import platform
-import shutil
 import sys
-import appdirs
 import importlib.util
 
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot, Context
+from discordai.template import get_cogs_path
 from discordai import __version__ as version
 
 intents = discord.Intents.default()
 intents.message_content = True
-bot = Bot(command_prefix=commands.when_mentioned_or(
-    '/'), intents=intents, help_command=None)
+bot = Bot(
+    command_prefix=commands.when_mentioned_or("/"), intents=intents, help_command=None
+)
 
 
-def start_bot(config, sync=False):
-    bot.config = config
+def start_bot(discord_token: str, openai_key: str, sync=False):
+    bot.DISCORD_BOT_TOKEN = discord_token
+    bot.OPENAI_API_KEY = openai_key
     bot.chat_messages = {}
     bot.emoji_map = {}
 
@@ -47,7 +47,11 @@ def start_bot(config, sync=False):
         for guild in bot.guilds:
             for emoji in guild.emojis:
                 if emoji.name not in bot.emoji_map:
-                    bot.emoji_map[emoji.name] = [emoji.id, emoji.animated]
+                    bot.emoji_map[emoji.name.lower()] = {
+                        "id": emoji.id,
+                        "name": emoji.name,
+                        "is_animated": emoji.animated,
+                    }
         print("-------------------")
 
     @bot.event
@@ -72,10 +76,12 @@ def start_bot(config, sync=False):
         executed_command = str(split[0])
         if context.guild is not None:
             print(
-                f"Executed {executed_command} command in {context.guild.name} (ID: {context.guild.id}) by {context.author} (ID: {context.author.id})")
+                f"Executed {executed_command} command in {context.guild.name} (ID: {context.guild.id}) by {context.author} (ID: {context.author.id})"
+            )
         else:
             print(
-                f"Executed {executed_command} command by {context.author} (ID: {context.author.id}) in DMs")
+                f"Executed {executed_command} command by {context.author} (ID: {context.author.id}) in DMs"
+            )
 
     @bot.event
     async def on_command_error(context: Context, error) -> None:
@@ -91,23 +97,25 @@ def start_bot(config, sync=False):
             embed = discord.Embed(
                 title="Hey, please slow down!",
                 description=f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
-                color=0xE02B2B
+                color=0xE02B2B,
             )
             await context.send(embed=embed)
         elif isinstance(error, commands.MissingPermissions):
             embed = discord.Embed(
                 title="Error!",
-                description="You are missing the permission(s) `" + ", ".join(
-                    error.missing_permissions) + "` to execute this command!",
-                color=0xE02B2B
+                description="You are missing the permission(s) `"
+                + ", ".join(error.missing_permissions)
+                + "` to execute this command!",
+                color=0xE02B2B,
             )
             await context.send(embed=embed)
         elif isinstance(error, commands.BotMissingPermissions):
             embed = discord.Embed(
                 title="Error!",
-                description="I am missing the permission(s) `" + ", ".join(
-                    error.missing_permissions) + "` to fully perform this command!",
-                color=0xE02B2B
+                description="I am missing the permission(s) `"
+                + ", ".join(error.missing_permissions)
+                + "` to fully perform this command!",
+                color=0xE02B2B,
             )
             await context.send(embed=embed)
         elif isinstance(error, commands.MissingRequiredArgument):
@@ -115,7 +123,7 @@ def start_bot(config, sync=False):
                 title="Error!",
                 # We need to capitalize because the command arguments have no capital letter in the code.
                 description=str(error).capitalize(),
-                color=0xE02B2B
+                color=0xE02B2B,
             )
             await context.send(embed=embed)
         raise error
@@ -124,43 +132,34 @@ def start_bot(config, sync=False):
         """
         The code in this function is executed whenever the bot will start.
         """
-        if getattr(sys, 'frozen', False):
+        cogs_path = get_cogs_path(update_cogs=True)
+        if getattr(sys, "frozen", False):
             # The code is being run as a frozen executable
-            cogs_path = pathlib.Path(appdirs.user_data_dir(appname="discordai")) / "discordai" / "bot" / "cogs"
-            data_dir = pathlib.Path(sys._MEIPASS)
-            og_cogs_path = data_dir / "discordai" / "bot" / "cogs"
-            os.makedirs(cogs_path, exist_ok=True)
-            for file in og_cogs_path.glob("*"):
-                dest_file = cogs_path / file.name
-                shutil.copy2(file, dest_file)
-            for file in os.listdir(cogs_path):
-                if file.endswith(".py"):
-                    extension = file[:-3]
-                    if extension != "__init__":
-                        try:
-                            module_path = cogs_path / f'{extension}.py'
-                            spec = importlib.util.spec_from_file_location(extension, module_path)
-                            module = importlib.util.module_from_spec(spec)
-                            spec.loader.exec_module(module)
-                            await module.setup(bot=bot)
-                            print(f"Loaded extension '{extension}'")
-                        except Exception as e:
-                            exception = f"{type(e).__name__}: {e}"
-                            print(f"Failed to load extension {extension}\n{exception}")
+            for file in cogs_path.glob("*.py"):
+                if file.stem != "__init__":
+                    try:
+                        module_path = cogs_path / file.name
+                        spec = importlib.util.spec_from_file_location(
+                            file.stem, module_path
+                        )
+                        module = importlib.util.module_from_spec(spec)
+                        spec.loader.exec_module(module)
+                        await module.setup(bot=bot)
+                        print(f"Loaded extension '{file.stem}'")
+                    except Exception as e:
+                        exception = f"{type(e).__name__}: {e}"
+                        print(f"Failed to load extension {file.stem}\n{exception}")
         else:
-            # The code is being run normally
-            bot_dir = pathlib.Path(os.path.dirname(__file__))
-            cogs_path = bot_dir / "cogs"
-            for file in os.listdir(cogs_path):
-                if file.endswith(".py"):
-                    extension = file[:-3]
-                    if extension != "__init__":
-                        try:
-                            await bot.load_extension(f".cogs.{extension}", package="discordai.bot")
-                            print(f"Loaded extension '{extension}'")
-                        except Exception as e:
-                            exception = f"{type(e).__name__}: {e}"
-                            print(f"Failed to load extension {extension}\n{exception}")
+            for file in cogs_path.glob("*.py"):
+                if file.stem != "__init__":
+                    try:
+                        await bot.load_extension(
+                            f".cogs.{file.stem}", package="discordai.bot"
+                        )
+                        print(f"Loaded extension '{file.stem}'")
+                    except Exception as e:
+                        exception = f"{type(e).__name__}: {e}"
+                        print(f"Failed to load extension {file.stem}\n{exception}")
 
     asyncio.run(load_cogs())
-    bot.run(config["token"])
+    bot.run(bot.DISCORD_BOT_TOKEN)
