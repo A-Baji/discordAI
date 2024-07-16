@@ -15,10 +15,10 @@ import re
 
 def replace_emoji(emoji_name: str, emoji_map):
     emoji = emoji_name.lower()
-    emoji_id = emoji_map[emoji]["id"]
-    emoji_name = emoji_map[emoji]["name"]
-    is_animated = emoji_map[emoji]["is_animated"]
     if emoji in emoji_map:
+        emoji_id = emoji_map[emoji]["id"]
+        emoji_name = emoji_map[emoji]["name"]
+        is_animated = emoji_map[emoji]["is_animated"]
         return f"<{{'a' if is_animated else ''}}:{{emoji_name}}:{{emoji_id}}>"
     else:
         return f":{{emoji_name}}:"

@@ -2,6 +2,12 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [3.0.2] - 07-16-2024
+
+### Fixed
+
+- bug where custom slash commands would return error due to emoji map issues
+
 ## [3.0.1] - 07-16-2024
 
 ### Changed
@@ -119,6 +125,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 - modified readme
 
+[3.0.2]: https://github.com/A-Baji/discordAI/compare/3.0.1...3.0.2
 [3.0.1]: https://github.com/A-Baji/discordAI/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/A-Baji/discordAI/compare/2.0.1...3.0.0
 [2.0.1]: https://github.com/A-Baji/discordAI/compare/1.3.2...2.0.1
