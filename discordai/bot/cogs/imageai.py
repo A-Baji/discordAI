@@ -73,7 +73,7 @@ class ImageAI(commands.Cog, name="imageai"):
             )
             print(f"Failed to generate image with parameters: {prompt}\nError: {error}")
             await context.send(
-                f"Failed to generate image with parameters: {prompt}\nError: {error}"[
+                f"Failed to generate image with parameters: {prompt}\nException: {type(error).__name__}\nError: {error}"[
                     :2000
                 ]
             )

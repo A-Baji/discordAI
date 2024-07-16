@@ -68,7 +68,7 @@ class OpenAI(commands.Cog, name="openai"):
                 f"Failed to generate valid response with parameters: {params}\nError: {error}"
             )
             await context.send(
-                f"Failed to generate valid response with paramaters: {params}\nError: {error}"[
+                f"Failed to generate valid response with paramaters: {params}\nException: {type(error).__name__}\nError: {error}"[
                     :2000
                 ]
             )
