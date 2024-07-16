@@ -67,7 +67,7 @@ class {class_name}(commands.Cog, name="{command_name}"):
                 echo=False,
                 stop="." if stop else None,
             )
-            prompt = f"**{{prompt}}**" if bold else prompt
+            prompt = f"**{{prompt}}**" if bold and prompt else prompt
             emojied_response = re.sub(
                 r":(\\w+):",
                 lambda match: replace_emoji(match.group(1), context.bot.emoji_map),
@@ -155,7 +155,7 @@ def gen_new_command(
                 stop_default=stop_default,
                 bold_default=bold_default,
                 class_name=command_name.capitalize(),
-                error='f"Failed to generate valid response with parameters: {params}\\nError: {error}"',
+                error='f"Failed to generate valid response with parameters: {params}\\nException: {type(error).__name__}\\nError: {error}"',
             )
         )
         print(

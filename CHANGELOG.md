@@ -4,9 +4,15 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 ## [3.0.1] - 07-16-2024
 
+### Changed
+
+- updated modelizer to version [3.0.11](https://github.com/A-Baji/discordAI-modelizer/releases/tag/3.0.11)
+- slash command error output is more descriptive
+
 ### Fixed
 
 - log downloading for non linux operating systems
+- bug where empty prompts would print "**" when bold was true
 
 
 ## [3.0.0] - 07-12-2024
