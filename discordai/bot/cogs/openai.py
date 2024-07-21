@@ -14,7 +14,7 @@ from typing import Literal
 
 
 class OpenAI(commands.Cog, name="openai"):
-    models = Literal["gpt-3.5-turbo", "gpt-4o", "gpt-4-turbo"]
+    models = Literal["gpt-4o-mini", "gpt-3.5-turbo", "gpt-4o", "gpt-4-turbo"]
 
     def __init__(self, bot):
         self.bot = bot
@@ -25,7 +25,7 @@ class OpenAI(commands.Cog, name="openai"):
     )
     @app_commands.describe(
         prompt="The prompt to pass in",
-        model="Listed by cost: Default=gpt-3.5-turbo",
+        model="Listed by cost: Default=gpt-4o-mini",
         temp="Number between 0.0 and 2.0. Higher values means more risks: Min=0.0 Max=2.0 Default=1.0",
         presence_penalty="Number between -2.0 and 2.0. Positive values will encourage new topics: Min=-2.0 Max=2.0 Default=0.0",
         frequency_penalty="Number between -2.0 and 2.0. Positive values will encourage new words: Min=-2.0 Max=2.0 Default=0.0",
@@ -35,7 +35,7 @@ class OpenAI(commands.Cog, name="openai"):
         self,
         context: Context,
         prompt: str,
-        model: models = "gpt-3.5-turbo",
+        model: models = "gpt-4o-mini",
         temp: float = 1.0,
         presence_penalty: float = 0.0,
         frequency_penalty: float = 0.0,
