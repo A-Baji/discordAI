@@ -2,6 +2,12 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [3.1.0] - 07-21-2024
+
+### Added
+
+- support for the new gpt4o mini model in gpt commands and made it the default model
+
 ## [3.0.2] - 07-16-2024
 
 ### Fixed
@@ -125,6 +131,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 - modified readme
 
+[3.1.0]: https://github.com/A-Baji/discordAI/compare/3.0.2...3.1.0
 [3.0.2]: https://github.com/A-Baji/discordAI/compare/3.0.1...3.0.2
 [3.0.1]: https://github.com/A-Baji/discordAI/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/A-Baji/discordAI/compare/2.0.1...3.0.0
